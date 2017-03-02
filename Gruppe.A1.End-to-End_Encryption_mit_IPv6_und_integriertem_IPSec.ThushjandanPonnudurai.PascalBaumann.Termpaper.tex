@@ -20,6 +20,9 @@
 \DeclareLanguageMapping{english}{english-apa}
 % To have text wrap around pictures
 \usepackage{wrapfig}
+% Blindtext package
+% TODO remove
+\usepackage{blindtext}
 
 % Titlepage
 \newcommand*{\titleAP}{\begingroup % Create the command for including the title page in the document
@@ -28,9 +31,10 @@
 	
 	{\Large Thushjandan Ponnudurai} and {\Large Pascal Baumann}\\[0.167\textheight] % Author name
 	
-	{\Huge\bfseries To be determined}\\[\baselineskip]
+	{\Huge\bfseries End-to-End Encryption mit IPv6 und integriertem IPSec}\\[\baselineskip]
 	
-	{\Large \textit{Thesis paper NS FS2017}}\\
+	%TODO review subtitle
+	{\Large \textit{Term paper NS FS2017}}\\
 	\today
 	
 	\vspace*{3\baselineskip} % Whitespace at the bottom of the page
@@ -44,24 +48,42 @@
 
 \newpage
 
+\begin{abstract}
+	%TODO write abstract
+	\blindtext
+\end{abstract}
+
 \tableofcontents
 
 \newpage
 
-\chapter{Introduction}
+\chapter{Theoretical part}
+\label{ch:Theory}
 
-\section{Preamble}
-Very happy to have found likeminded people in his quest, little \LaTeX-man sat down to present a working example. \parencite{Baumann2017}
+\section{IP protocols}
+\label{sec:IPprot}
 
-\begin{figure}[htb]
-	\centering
-	\includegraphics[keepaspectratio=true,height=8\baselineskip]{compiling.png}
-	\caption{This would be a picture}
-	\label{fig:xkcd_compiling}
-\end{figure}
+\subsection{IPv4}
+\label{ssec:IPv4}
 
-\subsection{Pretext}
-This would be a subsection with a reference to figure \ref{fig:xkcd_compiling}.
+\subsection{IPv6}
+\label{ssec:IPv6}
+
+\section{VPN protocol suites}
+\label{sec:VPNs}
+
+\subsection{SSL VPN}
+\label{ssec:sslvpn}
+
+\subsection{L2TP/PPTP}
+\label{ssec:l2tppptp}
+
+\subsection{IPSec}
+\label{ssec:IPSec}
+
+
+\chapter{Practical part}
+\label{ch:Practical}
 
 \newpage
 
