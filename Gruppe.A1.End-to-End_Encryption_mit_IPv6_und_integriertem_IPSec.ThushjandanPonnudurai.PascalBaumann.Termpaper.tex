@@ -75,14 +75,15 @@
 \subsection{SSL VPN}
 \label{ssec:sslvpn}
 
-SSL VPN is a transport layer VPN protocol. The encryption and connection establishment is done over the TLS protocol. TLS (Transport Layer Security) is the successor of the SSL protocol, and thus a part of the SSL protocol suite which is widely used in the web environment. Due to this widespread adpation, implementing an SSL VPN in an enterprise environment is relatively trivial. As TLS is reliant on a reliable transport channel, its typically implemented over TCP. Therefore SSL VPN (over TLS) suffers from the same problems that TCP has:
+SSL VPN is a transport layer VPN protocol. The encryption and connection establishment is done over the TLS protocol. TLS (Transport Layer Security) is the successor of the SSL protocol, and thus a part of the SSL protocol suite which is widely used in the web environment. Due to this widespread adpation, implementing an SSL VPN in an enterprise environment is relatively trivial. As TLS is reliant on a reliable transport channel, its typically implemented over TCP. \parencite[6,96]{Dierks2008}
+Therefore SSL VPN (over TLS) suffers from the same problems that TCP has:
 
 \begin{itemize}
 	\item Not suited for time-crititcal applications, due to the SYN-ACK time overhead
 	\item Prone to SYN DoS attacks
 \end{itemize}
 
-These disadvantages led to the development of DTLS. The Datagram Transport Layer Security protocol has the same security guarantees as TLS but implements it over the datagram service. The fundamental problem faced when using the datagram service is the unreliability of packets (the order of packets, missing packets), which TLS can not handle as it depends on continuous sequence numbers to decrypt the received communication and a ensured transmission of all handshake messages. To work around these issues, DTLS bans stream ciphers (to avoid dependency on preceding packets), adds timers to detect missing handshake messages and adds explicit sequence messages. If a client or server receives a message too far ahead in the sequence, it caches it and uses it when all preceding messages are received.
+These disadvantages led to the development of DTLS. The Datagram Transport Layer Security protocol has the same security guarantees as TLS but implements it over the datagram service. The fundamental problem faced when using the datagram service is the unreliability of packets (the order of packets, missing packets), which TLS can not handle as it depends on continuous sequence numbers to decrypt the received communication and a ensured transmission of all handshake messages. To work around these issues, DTLS bans stream ciphers (to avoid dependency on preceding packets), adds timers to detect missing handshake messages and adds explicit sequence messages. If a client or server receives a message too far ahead in the sequence, it caches it and uses it when all preceding messages are received. \parencite[5-15]{Rescorla2012}
 
 Unrelated to which specific implementation of TLS is used (TLS over TCP, or DTLS), the application data is encrypted on the transport layer on the client and sent securely along the full path to the server.
 
