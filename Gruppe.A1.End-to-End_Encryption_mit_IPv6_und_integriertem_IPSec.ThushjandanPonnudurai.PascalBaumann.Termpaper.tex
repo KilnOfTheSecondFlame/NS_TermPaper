@@ -62,9 +62,17 @@
 
 \section{IP protocols}
 \label{sec:IPprot}
+The Internet Protocol (IP) is a set of rules governing how packets are transmitted over the internet. IP is probably the common protocol over the internet and is one of the layer 3 protocols (network layer) in the OSI model. It implements two basic functions:
+\begin{itemize}
+	\item Addressing hosts
+	\item Routing datagrams (packets) from a source host to a destination host over multiple IP networks
+\end{itemize}
+A datagram is composed of an IP header and a payload. Source and destination IP addresses and other meta data are parts of the IP header and are needed to deliver a datagram. The payload includes the data that is transported.
+IPv4 is the first major version and is at the moment the dominant protocol version of the internet. Due to a lack of IPv4 addresses the successor IPv6 was born. \parencite{NadeemUnuth2016}
 
 \subsection{IPv4}
 \label{ssec:IPv4}
+
 
 \subsection{IPv6}
 \label{ssec:IPv6}
