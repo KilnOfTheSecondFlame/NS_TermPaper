@@ -31,7 +31,7 @@
 	
 	{\Large Thushjandan Ponnudurai} and {\Large Pascal Baumann}\\[0.167\textheight] % Author name
 	
-	{\Huge\bfseries End-to-End Encryption mit IPv6 und integriertem IPSec}\\[\baselineskip]
+	{\Huge\bfseries Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment}\\[\baselineskip]
 	
 	%TODO review subtitle
 	{\Large \textit{Term paper NS FS2017}}\\
@@ -75,8 +75,8 @@
 \subsection{SSL VPN}
 \label{ssec:sslvpn}
 
-SSL VPN is a transport layer VPN protocol. The encryption and connection establishment is done over the TLS protocol. TLS (Transport Layer Security) is the successor of the SSL protocol, and thus a part of the SSL protocol suite which is widely used in the web environment. Due to this widespread adpation, implementing an SSL VPN in an enterprise environment is relatively trivial. As TLS is reliant on a reliable transport channel, its typically implemented over TCP. \parencite[6,96]{Dierks2008}
-Therefore SSL VPN (over TLS) suffers from the same problems that TCP has:
+SSL VPN is a transport layer VPN protocol. The encryption and connection establishment is done over the TLS protocol. TLS (Transport Layer Security) is the successor of the SSL protocol, and thus a part of the SSL protocol suite which is widely used in the web environment. Due to this widespread adaptation, implementing an SSL VPN in an enterprise environment is relatively trivial. As TLS is reliant on a reliable transport channel, its typically implemented over TCP. \parencite[6,96]{Dierks2008}
+Therefore, SSL VPN (over TLS) suffers from the same problems that TCP has:
 
 \begin{itemize}
 	\item Not suited for time-critical applications, due to the time overhead
@@ -89,6 +89,13 @@ Unrelated to which specific implementation of TLS is used (TLS over TCP, or DTLS
 
 \subsection{L2TP/PPTP}
 \label{ssec:l2tppptp}
+When discussing Layer Two Tunneling Protocol (L2TP) and Point-to-Point Tunneling Protocol (PPTP), one has to first understand the predecessor of them both: Point-to-Point Protocol.
+The development of PPP arouse from the discontent with then de-facto standard for serial links SLIP. The role of SLIP was to bridge the gap between IP and serial links, which it does, but not more. The wish for a general purpose protocol, able to encapsulate multiple different higher layer protocols and with support for different physical link layer configurations. PPP was based on the ISO standards protocol HDLC and adapted the framing structure and some operation concepts from it.  \parencite{Kozierok}
+
+PPTP in turn describes a protocol for tunneling PPP traffic over an IP network. It does not change the implementation or modify the encapsulated PPP traffic. As its just a vehicle for transporting PPP traffice, PPTP does not offer authentication or encryption, as this is handled by the PPP protocol itself (with PAP/CHAP and ECP respectively). The beauty of PPTP is, that it can be encapsulated in the IP payload, so that only the two endpoints talking to each other have to implement it. PPTP has a control channel which is initiated over TCP and a modified GRE protocol for the tunnel itself. \parencite{Hamzeh1999}
+
+
+
 
 \subsection{IPSec}
 \label{ssec:IPSec}
@@ -108,7 +115,7 @@ Unrelated to which specific implementation of TLS is used (TLS over TCP, or DTLS
 \section{IPv6 mit IPSec}
 \label{sec:IPv6IPSec}
 
-\chapter[Practical part\\Client-to-Client IPSec VPN mit zentralem Zertifikatsspeicher mit OpenSSL CA und inhomogenen Client OS]{Practical part\\\large{Client-to-Client IPSec VPN mit zentralem Zertifikatsspeicher mit OpenSSL CA und inhomogenen Client OS'}}
+\chapter[Practical part\\Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment}}
 \label{ch:Practical}
 
 \section{Description of the experiment}
