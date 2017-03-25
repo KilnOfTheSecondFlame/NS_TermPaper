@@ -31,7 +31,7 @@
 	
 	{\Large Thushjandan Ponnudurai} and {\Large Pascal Baumann}\\[0.167\textheight] % Author name
 	
-	{\Huge\bfseries Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment}\\[\baselineskip]
+	{\Huge\bfseries Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}\\[\baselineskip]
 	
 	%TODO review subtitle
 	{\Large \textit{Term paper NS FS2017}}\\
@@ -99,14 +99,20 @@ L2TP as a protocol enables to route PPP over a layer two network. Before L2TP a 
 
 
 
-\subsection{IPSec}
-\label{ssec:IPSec}
-IPSec is a widely used tunneling protocol suite. As it is a suite, there are many different interlocking parts and many asterisks when deploying IPSec. But as stated in \cite{Bellovin2009}: \textquotedblleft These can be used to provide confidentiality, integrity, and replay protection;\textquotedblright.
-In this paragraph we want to introduce some key concepts for IPSec which will be discussed in more detail in section \ref{sec:IPSec}.
+\subsection{IPsec}
+\label{ssec:IPsec}
+IPsec is a widely used tunneling protocol suite. As it is a suite, there are many different interlocking parts and many considerations to be made when deploying IPsec. But as stated in \cite{Bellovin2009}: \textquotedblleft These [parts] can be used to provide confidentiality, integrity, and replay protection;\textquotedblright.
+In this paragraph we want to introduce some key concepts for IPsec which will be discussed in more detail in section \ref{sec:IPsec}.
+The first question one has to ask oneself is, which security protocol to use - Authentication Header (AH) or Encapsulating Security Payload (ESP), or both simultaneously. 
 
+The AH hashes the whole original IP packet (in tunnel mode) or just the higher-layer protocol header and data (in transport mode). Upon receival, the receiving party can verify these hashes and recognize tampering; this makes the AH security protocol irreconcilable with the NAT method. \parencite[2-11]{Kent2005AH}
 
-\section{IPSec}
-\label{sec:IPSec}
+Analogous to the AH protocol, ESP can work both in transport and tunnel mode. Simultaneously, in transport mode, the ESP header is inserted after the original IP header and encrypts the higher-level protocol header and data, whereas in tunnel mode, the ESP protocol encapsulates the whole IP packet and generates a new IP header. \parencite[18-20]{Kent2005ESP}
+
+The next consideration concerns the key management. Although manual key management can be used, it's generally not advised and disables the replay detection mechanism.The most widely used key management is the Internet Key Exchange (IKE), which is available in its original form (IKEv1) and in a new, simpler version (IKEv2). In network environment where mainly Microsoft systems are used, the usage of Kerberised Internet Negotiation of Keys (KINK) is available, as this depends on the Kerberos system. \parencite[4-5]{Bellovin2009}
+
+\section{IPsec}
+\label{sec:IPsec}
 
 \subsection{Algorithmen \& DHs}
 \label{ssec:AlgoDH}
@@ -117,10 +123,10 @@ In this paragraph we want to introduce some key concepts for IPSec which will be
 \subsection{Phase 2}
 \label{ssec:Phase2}
 
-\section{IPv6 mit IPSec}
-\label{sec:IPv6IPSec}
+\section{IPv6 mit IPsec}
+\label{sec:IPv6IPsec}
 
-\chapter[Practical part\\Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPSec VPN with an OpenSSL CA in a mixed host environment}}
+\chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
 \label{ch:Practical}
 
 \section{Description of the experiment}
