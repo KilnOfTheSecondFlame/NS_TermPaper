@@ -31,7 +31,7 @@
 	
 	{\Large Thushjandan Ponnudurai} and {\Large Pascal Baumann}\\[0.167\textheight] % Author name
 	
-	{\Huge\bfseries End-to-End Encryption mit IPv6 und integriertem IPSec}\\[\baselineskip]
+	{\Huge\bfseries Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}\\[\baselineskip]
 	
 	%TODO review subtitle
 	{\Large \textit{Term paper NS FS2017}}\\
@@ -75,15 +75,74 @@
 \subsection{SSL VPN}
 \label{ssec:sslvpn}
 
+SSL VPN is a transport layer VPN protocol. The encryption and connection establishment is done over the TLS protocol. TLS (Transport Layer Security) is the successor of the SSL protocol, and thus a part of the SSL protocol suite which is widely used in the web environment. Due to this widespread adaptation, implementing an SSL VPN in an enterprise environment is relatively trivial. As TLS is reliant on a reliable transport channel, its typically implemented over TCP. \parencite[6,96]{Dierks2008}
+
+Therefore, SSL VPN (over TLS) suffers from the same problems that TCP has:
+
+\begin{itemize}
+	\item Not suited for time-critical applications, due to the time overhead
+	\item Prone to SYN DoS attacks
+\end{itemize}
+
+These disadvantages led to the development of DTLS. The Datagram Transport Layer Security protocol has the same security guarantees as TLS but implements it over the datagram service. The fundamental problem faced when using the datagram service is the unreliability of packets (the order of packets, missing packets), which TLS can not handle as it depends on continuous sequence numbers to decrypt the received communication and a ensured transmission of all handshake messages. To work around these issues, DTLS bans stream ciphers (to avoid dependency on preceding packets), adds timers to detect missing handshake messages and adds explicit sequence messages. If a client or server receives a message too far ahead in the sequence, it caches it and uses it when all preceding messages are received. \parencite[5-15]{Rescorla2012}
+
+Unrelated to which specific implementation of TLS is used (TLS over TCP, or DTLS), the application data is encrypted on the transport layer on the client and sent securely along the full path to the server.
+
 \subsection{L2TP/PPTP}
 \label{ssec:l2tppptp}
+When discussing Layer Two Tunneling Protocol (L2TP) and Point-to-Point Tunneling Protocol (PPTP), one has to first understand the predecessor of them both: Point-to-Point Protocol (PPP).
+The development of PPP arouse from the discontent with then de-facto standard for serial links SLIP. The role of SLIP was to bridge the gap between IP and serial links, which it does, but not more. The wish for a general purpose protocol, able to encapsulate multiple different higher layer protocols and with support for different physical link layer configurations. PPP was based on the ISO standards protocol HDLC and adapted the framing structure and some operation concepts from it.  \parencite{Kozierok2005}
 
-\subsection{IPSec}
-\label{ssec:IPSec}
+PPTP in turn describes a protocol for tunneling PPP traffic over an IP network. It does not change the implementation or modify the encapsulated PPP traffic. As its just a vehicle for transporting PPP traffice, PPTP does not offer authentication nor encryption, as this is handled by the PPP protocol itself (with PAP/CHAP and ECP respectively). The beauty of PPTP is, that it can be encapsulated in the IP payload, so that only the two endpoints talking to each other have to implement it. PPTP has a control channel which is initiated over TCP and a modified GRE protocol for the tunnel itself. \parencite{Hamzeh1999}
+
+L2TP as a protocol enables to route PPP over a layer two network. Before L2TP a PPP session had to be terminated at the layer two endpoint. L2TP enables that the PPP traffic is passed on to a Network Access Server (NAS) and divorces the PPP and layer two traffic. The L2TP tunnel splits its traffic into a data and control channel. The data traffic is encapsulated by a L2TP header and then passed over an unreliable channel (UDP, Frame Relay, etc.), whereas the control traffic is passed over a reliable channel. Before PPP traffic is passed over the tunnel, an L2TP session has to be established over the control channel. Authentication is over a CHAP-like mechanism and necessitates a single pre-shared secret. \parencite{Townsley1999}
 
 
-\chapter{Practical part}
+
+\subsection{IPsec}
+\label{ssec:IPsec}
+IPsec is a widely used tunneling protocol suite. As it is a suite, there are many different interlocking parts and many considerations to be made when deploying IPsec. But as stated in \cite{Bellovin2009}: \textquotedblleft These [parts] can be used to provide confidentiality, integrity, and replay protection;\textquotedblright.
+In this paragraph we want to introduce some key concepts for IPsec which will be discussed in more detail in section \ref{sec:IPsec}.
+The first question one has to ask oneself is, which security protocol to use - Authentication Header (AH) or Encapsulating Security Payload (ESP), or both simultaneously. 
+
+The AH hashes the whole original IP packet (in tunnel mode) or just the higher-layer protocol header and data (in transport mode). Upon receival, the receiving party can verify these hashes and recognize tampering; this makes the AH security protocol irreconcilable with the NAT method. \parencite[2-11]{Kent2005AH}
+
+Analogous to the AH protocol, ESP can work both in transport and tunnel mode. Simultaneously, in transport mode, the ESP header is inserted after the original IP header and encrypts the higher-level protocol header and data, whereas in tunnel mode, the ESP protocol encapsulates the whole IP packet and generates a new IP header. \parencite[18-20]{Kent2005ESP}
+
+The next consideration concerns the key management. Although manual key management can be used, it's generally not advised and disables the replay detection mechanism.The most widely used key management is the Internet Key Exchange (IKE), which is available in its original form (IKEv1) and in a new, simpler version (IKEv2). In network environment where mainly Microsoft systems are used, the usage of Kerberised Internet Negotiation of Keys (KINK) is available, as this depends on the Kerberos system. \parencite[4-5]{Bellovin2009}
+
+\section{IPsec}
+\label{sec:IPsec}
+
+\subsection{Algorithmen \& DHs}
+\label{ssec:AlgoDH}
+
+\subsection{Phase 1}
+\label{ssec:Phase1}
+
+\subsection{Phase 2}
+\label{ssec:Phase2}
+
+\section{IPv6 mit IPsec}
+\label{sec:IPv6IPsec}
+
+\chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
 \label{ch:Practical}
+
+\section{Description of the experiment}
+\label{sec:ExpDesc}
+
+\section{Expected results}
+\label{sec:ExpectedResult}
+
+\section{Experiment execution}
+\label{sec:ExpExec}
+
+\section{Experiment results}
+\label{sec:ExpRes}
+
+\section{Conclusion}
+\label{sec:Conc}
 
 \newpage
 
