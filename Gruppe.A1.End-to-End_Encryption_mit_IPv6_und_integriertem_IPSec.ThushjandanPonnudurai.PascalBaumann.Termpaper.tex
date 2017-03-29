@@ -11,6 +11,9 @@
 \usepackage{tocbibind}
 % Better lists
 \usepackage{enumitem}
+% Shaded Boxes
+\usepackage[svgnames]{xcolor}
+\usepackage{framed}
 % Use biblatex
 \usepackage[style=apa,backend=biber,citestyle=authoryear]{biblatex} 
 % Define the bibliography file
@@ -20,6 +23,8 @@
 \DeclareLanguageMapping{english}{english-apa}
 % To have text wrap around pictures
 \usepackage{wrapfig}
+% Define Shaded box
+\definecolor{shadecolor}{named}{LightGray}
 % Blindtext package
 % TODO remove
 \usepackage{blindtext}
@@ -68,15 +73,55 @@ The Internet Protocol (IP) is a set of rules governing how packets are transmitt
 	\item Routing datagrams (packets) from a source host to a destination host over multiple IP networks
 \end{itemize}
 A datagram is composed of an IP header and a payload. Source and destination IP addresses and other meta data are parts of the IP header and are needed to deliver a datagram. The payload includes the data that is transported.
+
 IPv4 is the first major version and is at the moment the dominant protocol version of the internet. Due to a lack of IPv4 addresses the successor IPv6 was born. \parencite{NadeemUnuth2016}
 
 \subsection{IPv4}
 \label{ssec:IPv4}
-Internet Protocol version 4 (IPv4) is specified in the IETF RFC 791 document and is existing since 1980. To route a packet across the networks, every host in the network has a logical address, which is the IPv4 address. This IPv4 addressing system is based on a 32-bit logical address, which amounts to 4294967296 unique addresses.
-An example of an IPv4 address is "148.21.45.110". The address is written in dot decimal notation and it has four octets of 8-bits. The binary form of this address will be 10010100.00010101.00101101.01101110. \parencite{Babatunde2014}\par
+Internet Protocol version 4 (IPv4) is specified in the IETF RFC 791 document and is existing since 1980. To route a packet across the networks, every host in the network has a logical address, which is the IPv4 address. This IPv4 addressing system is based on a 32-bit logical address, which amounts to 4'294'967'296 unique addresses.
+
+An example of an IPv4 address is "148.21.45.110". The address is written in dot decimal notation and it has four octets of 8-bits. The binary form of this address will be 10010100.00010101.00101101.01101110. \parencite{Babatunde2014}
+
 At the moment there is an IPv4 address exhaustion problem. Since the 3th of February 2011 Internet Corporation for Assigned Names and Numbers (ICANN) doesn't have any free blocks of IPv4 addresses. Due this problem IPv6 was developed and everything will be migrated in IPv6 over the long-term. 
+\subsection{IPv6}
 \label{ssec:IPv6}
-Internet Protocol version 6 (IPv6) is the successor of IPv4. It was specified in 1998. The growth of the internet led to a need for a new alternative for IPv4. The problem is that IPv4 cannot provide the needed number of logical addresses around the world.
+Internet Protocol version 6 (IPv6) is the successor of IPv4. It was specified in 1998. The growth of the internet led to a need for a new alternative for IPv4. The problem is that IPv4 cannot provide the needed number of logical addresses around the world. For that reason IPv6 protocol was developed.\parencite[11]{Babatunde2014}
+
+Several important areas were enhanced in the IPv6 protocol:
+\begin{itemize}
+	\item Expanded addressing
+	\item Simplified header format
+	\item Improved extension and option support
+\end{itemize}
+With the expanded address space the issue with the lack of addresses will be eliminated. Also the addressing architecture and the simplified header format helps improve the routing efficiency. Fewer packets needs to be processed thanks to the simplified header format. 
+Every IPv6 packet has a fixed header length of 40 octets. But any options can be appended in extension headers after the IPv6 header. \parencite[106-107,123-124]{Loshin2004}
+
+\subsubsection{IPv6 Addressing}
+\label{sssec:ipv6:addressing}
+There are three types of IPv6 addresses:
+\begin{itemize}
+	\item Unicast. A packet sent to an unicast address is delivered to the interface identified by that address.
+	\item Multicast. A packet sent to a multicast address is delivered to all interfaces identified by that address. This address could be existing on different hosts.
+	\item Anycast. A packet sent to a anycast address is delivered to one of the interfaces identified by that address. This address could be existing on different hosts.
+\end{itemize}
+Broadcast is not existing anymore in IPv6. \parencite[142-143]{Loshin2004}
+
+The lenght of an IPv6 address is 128-bit. It is usually represented as 8 groups of up to 4 hexadecimal digits that are separated with colons. Each group stands for 16 bit.
+\begin{shaded}
+	XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX
+\end{shaded}
+Here is an example of an IPv6 address.
+\begin{shaded}
+	2001:db8:1234:ABCD::10
+\end{shaded}
+IPv6 addresses are usually divided into two equal 64-bit parts. The first 64-bit part identifies a network address and the last 64-bit part identifies the host.\parencite[144-146]{Loshin2004}
+ 
+\subsubsection{IPv6 Headers}
+\label{sssec:ipv6:headers}
+The length of an IPv6 header is not variable like an IPv4 header. It has a fixed length of 40 bytes.
+% TODO "IPv6 Extension Headers Review and Considerations" Artikel verwenden
+
+
 \section{VPN protocol suites}
 \label{sec:VPNs}
 
