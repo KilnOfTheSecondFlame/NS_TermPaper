@@ -40,6 +40,7 @@
 	\vspace*{3\baselineskip} % Whitespace at the bottom of the page
 	\endgroup}
 
+% Define the path were images are found
 \graphicspath{{./img/}}
 
 \begin{document}
@@ -131,6 +132,53 @@ The next consideration concerns the key management. Although manual key manageme
 
 \section{Description of the experiment}
 \label{sec:ExpDesc}
+
+In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not.
+
+\subsection{Experiment layout}
+\label{ssec:ExpLayout}
+
+\begin{figure}[htb]
+	\includegraphics[keepaspectratio, width = \linewidth]{experiment_layout}
+	\caption{The setup which will be used in our experiment}
+	\label{fig:exp_layout}
+\end{figure}
+
+\subsection{Network addressing concept}
+\subsubsection{client network 01}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr01 & FD00:DEAD:CAFE:1::1/64 \\ 
+	\hline 
+	ws01 & FD00:DEAD:CAFE:1::2/64 \\ 
+	\hline 
+\end{tabular} 
+
+\subsubsection{client network 02}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr02 & FD00:DEAD:CAFE:2::1/64 \\ 
+	\hline 
+	ws02 & FD00:DEAD:CAFE:2::2/64 \\ 
+	\hline 
+\end{tabular} 
+
+\subsubsection{transport network}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr01 & FD00:DEAD:CAFE:3::1/64 \\ 
+	\hline 
+	rtr02 & FD00:DEAD:CAFE:3::2/64 \\ 
+	\hline 
+	rootCA & FD00:DEAD:CAFE:3::A/64 \\ 
+	\hline 
+\end{tabular} 
 
 \section{Expected results}
 \label{sec:ExpectedResult}
