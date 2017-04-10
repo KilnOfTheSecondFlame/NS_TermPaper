@@ -112,17 +112,18 @@ Analogous to the AH protocol, ESP can work both in transport and tunnel mode. Si
 
 The next consideration concerns the key management. Although manual key management can be used, it's generally not advised and disables the replay detection mechanism.The most widely used key management is the Internet Key Exchange (IKE), which is available in its original form (IKEv1) and in a new, simpler version (IKEv2). In network environment where mainly Microsoft systems are used, the usage of Kerberised Internet Negotiation of Keys (KINK) is available, as this depends on the Kerberos system. \parencite[4-5]{Bellovin2009}
 
-\section{IPsec}
-\label{sec:IPsec}
+\section{ISAKMP}
+\label{sec:ISAKMP}
 
 \subsection{Algorithmen \& DHs}
 \label{ssec:AlgoDH}
 
-\subsection{Phase 1}
+\subsection{IKE Phase 1}
 \label{ssec:Phase1}
 
-\subsection{Phase 2}
+\subsection{IKE Phase 2}
 \label{ssec:Phase2}
+After a secure IKE tunnel is established in the first phase, there is a second round of exchanging key information and building security associations (SA). "A security association (SA) is a set of policy and key(s) used to protect information. The ISAKMP SA is the shared policy and key(s) used by the negotiating peers in this protocol to protect their communication." \parencite{Harkins1998} After obtaining possibly multiple SAs, the IPsec tunnel is finally formed and the peers exchange information encrypted with the SAs. In the so called quick mode, the peers negotiate a common IPsec policy and secret keying material, which in turn lead to the IPsec SAs. If Perfect Forward Secrecy (PFS) is demanded, a new Diffie-Helman key exchange is performed through the secure ISAKMP tunnel. This ensures the keys from phase one be completely unrelated to the keys from phase two. The drawback of this is the additional computations needed to complete the DH key exchange.
 
 \section{IPv6 mit IPsec}
 \label{sec:IPv6IPsec}
@@ -133,7 +134,7 @@ The next consideration concerns the key management. Although manual key manageme
 \section{Description of the experiment}
 \label{sec:ExpDesc}
 
-In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not.
+In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script, that periodically sends a String via ncat to the receiver.
 
 \subsection{Experiment layout}
 \label{ssec:ExpLayout}
