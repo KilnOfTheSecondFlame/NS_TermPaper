@@ -14,6 +14,7 @@
 % Shaded Boxes
 \usepackage[svgnames]{xcolor}
 \usepackage{framed}
+\usepackage{mdframed}
 % Use biblatex
 \usepackage[style=apa,backend=biber,citestyle=authoryear]{biblatex} 
 % Define the bibliography file
@@ -24,7 +25,12 @@
 % To have text wrap around pictures
 \usepackage{wrapfig}
 % Define Shaded box
-\definecolor{shadecolor}{named}{LightGray}
+\definecolor{grey}{HTML}{C5C5C5}
+\definecolor{lightgrey}{HTML}{E6E6E6}
+\definecolor{lightblue}{HTML}{F0F7FD}
+\definecolor{greyblue}{HTML}{D0E3F0}
+\definecolor{darkblue}{HTML}{3A87AD}
+\newmdenv[topline=false,rightline=false,bottomline=false,linecolor=greyblue,linewidth=2pt,backgroundcolor=lightblue]{quotebox}
 % Blindtext package
 % TODO remove
 \usepackage{blindtext}
@@ -107,19 +113,62 @@ There are three types of IPv6 addresses:
 Broadcast is not existing anymore in IPv6. \parencite[142-143]{Loshin2004}
 
 The lenght of an IPv6 address is 128-bit. It is usually represented as 8 groups of up to 4 hexadecimal digits that are separated with colons. Each group stands for 16 bit.
-\begin{shaded}
+\begin{quotebox}
 	XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX
-\end{shaded}
+\end{quotebox}
 Here is an example of an IPv6 address.
-\begin{shaded}
+\begin{quotebox}
 	2001:db8:1234:ABCD::10
-\end{shaded}
+\end{quotebox}
 IPv6 addresses are usually divided into two equal 64-bit parts. The first 64-bit part identifies a network address and the last 64-bit part identifies the host.\parencite[144-146]{Loshin2004}
  
 \subsubsection{IPv6 Headers}
 \label{sssec:ipv6:headers}
-The length of an IPv6 header is not variable like an IPv4 header. It has a fixed length of 40 bytes.
-% TODO "IPv6 Extension Headers Review and Considerations" Artikel verwenden
+The length of an header in IPv6 is not variable like in IPv4. It has a fixed length of 40 bytes. An IPv4 header can be as short as 20 bytes and as long as 60 bytes due to the IP options. Due to fixed header length in IPv6 packet handling is more efficient. Routers process usually always the options in the IPv4 header. Even if the options aren't relevant for the processing router. This leads to a degradation of the forwarding performance.  \parencite[128]{Loshin2004}
+
+In the figure \ref{fig:IPv4_IPv6_Header} the IPv6 and IPv4 header are presented. It shows that an IPv6 header is simpler that an IPv4 header. The reason is that many attributes were removed in IPv6.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_headers}% no need to specify the file extension
+	\caption {IPv4 and IPv6 Headers \cite{cisco2006}}
+	\label{fig:IPv4_IPv6_Header}
+\end{figure}
+
+The IP option field is very important for the IP protocol operation. The functionality of IP options were removed from the main header and implemented in the extension headers. extension headers are a set of additional headers, which can be added as needed. So the routers will only process the main header and will process the extension headers only if it is required.
+
+The figure~\ref{fig:IPv4_IPv6_ext_Header} explains how the extension headers are linked together in an IPv6 packet.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_ext_headers}% no need to specify the file extension
+	\caption {IPv4 and IPv6 Headers \cite{cisco2006}}
+	\label{fig:IPv4_IPv6_ext_Header}
+\end{figure}
+The extension headers are defined in RFC 2460 and their are shown in the table~\ref{tab:extension_header_codes} along with the Next Header values assigned to them. The recommended order, how the headers should be chained in a packet, is also defined in this RFC. \parencite[1-3]{cisco2006}
+\begin{table}[]
+	\centering
+	\caption{Extension Headers and their recommended order in a packet}
+	\label{tab:extension_header_codes}
+	\begin{tabular}{lllll}
+		\hline
+		\textbf{Order}&  \textbf{Header Type}&  \textbf{Next Header Code}\\
+		\hline
+		1&  Basic IPv6 Header&  - \\
+		2&  Hop-by-Hop Options
+		Destination&  0 \\
+		3&  Destination Options (with Routing Options)&  60 \\
+		4&  Routing Header&  43 \\
+		5&  Fragment Header&  44 \\
+		6&  Authentication Header&  51 \\
+		7&  Encapsulation Security Payload Header&  50 \\
+		8&  Destination Options&  60 \\
+		9&  Mobility Header&  135 \\
+		&  No next header&  59 \\
+		Upper layer&  TCP&  6 \\
+		Upper layer&  UDP&  17 \\
+		Upper layer&  ICMPv6&  58 \\
+	\end{tabular}
+\end{table}
+
 
 
 \section{VPN protocol suites}
