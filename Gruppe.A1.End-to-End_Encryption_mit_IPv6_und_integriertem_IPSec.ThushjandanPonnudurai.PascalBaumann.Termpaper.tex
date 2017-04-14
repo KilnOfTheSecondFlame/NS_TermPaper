@@ -125,7 +125,7 @@ The next consideration concerns the key management. Although manual key manageme
 \label{ssec:Phase2}
 After a secure IKE tunnel is established in the first phase, there is a second round of exchanging key information and building security associations (SA). "A security association (SA) is a set of policy and key(s) used to protect information. The ISAKMP SA is the shared policy and key(s) used by the negotiating peers in this protocol to protect their communication." \parencite{Harkins1998} After obtaining possibly multiple SAs, the IPsec tunnel is finally formed and the peers exchange information encrypted with the SAs. In the so called quick mode, the peers negotiate a common IPsec policy and secret keying material, which in turn lead to the IPsec SAs. If Perfect Forward Secrecy (PFS) is demanded, a new Diffie-Helman key exchange is performed through the secure ISAKMP tunnel. This ensures the keys from phase one be completely unrelated to the keys from phase two. The drawback of this is the additional computations needed to complete the DH key exchange.
 
-\section{IPv6 mit IPsec}
+\section{IPv6 with IPsec}
 \label{sec:IPv6IPsec}
 
 \chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
@@ -183,9 +183,13 @@ In our experiment we will connect to host machines in separate IPv6 networks ove
 
 \section{Expected results}
 \label{sec:ExpectedResult}
+We expect that we will see the various phases on both clients. We expect to have problems with the algorithms used, specifically we expect that the Windows client will have predefined SAs which we won't be able to change. Therefore we will have to amend our Ubuntu client to match the requirements of his peer.
 
 \section{Experiment execution}
 \label{sec:ExpExec}
+We used two Cisco %TODO insert model of router
+where we connected the Cisco %TODO insert model of switch
+to the GigabitEthernet0/0 interfaces. Our clients where connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer), we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem 
 
 \section{Experiment results}
 \label{sec:ExpRes}
