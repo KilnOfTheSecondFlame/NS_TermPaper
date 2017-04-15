@@ -117,9 +117,38 @@ The next consideration concerns the key management. Although manual key manageme
 
 \subsection{Algorithmen \& DHs}
 \label{ssec:AlgoDH}
+Data confidentiality is the key requirement for any VPN. The confidentiality of the data is provided by the encryption algorithm. That's why it is very important to choose the optimal encryption algorithm. \parencite{Snader2006}
+
+There are two categories of cryptography algorithms:
+\begin{itemize}
+	\item Symmetric.
+	\item Asymmetric
+\end{itemize}
+
+\subsubsection{Symmetric}
+\label{sssec:symmetric}
+Sender and receiver are using the same secret key to encrypt and to decrypt the messages. The main problem with these categories of algorithms is finding a way to distribute the key without anyone else finding it.
+
+Some symmetrical algorithms:
+\begin{itemize}
+	\item AES (128, 192 or 256 bit)
+	\item DES (56-bit)
+	\item Triple-DES or 3DES (3x 56-bit = 168-bit).
+	\item Blowfish (128, 192 or 256 bit)
+	\item CAST (128-bit)
+	\item Camellia (128, 192 or 256 bit)
+\end{itemize}
+AES-256 is commonly used in VPNs. DES is not secure anymore, because the DES key can be cracked in less than 24 hours.
+
+\subsubsection{Asymmetric}
+\label{sssec:asymmetric}
+Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and the private key are mathematically related, it is not possible to find out the private key from the public key. 
+
+RSA, DSA and Elliptic Curve (ECC) are some asymmetrical algorithm. Asymmetrical encryption algorithm are used mostly in SSL VPN.
 
 \subsection{IKE Phase 1}
 \label{ssec:Phase1}
+
 
 \subsection{IKE Phase 2}
 \label{ssec:Phase2}
