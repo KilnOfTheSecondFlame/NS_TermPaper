@@ -115,7 +115,7 @@ The next consideration concerns the key management. Although manual key manageme
 \section{ISAKMP}
 \label{sec:ISAKMP}
 
-\subsection{Algorithmen \& DHs}
+\subsection{Algorithms \& DHs}
 \label{ssec:AlgoDH}
 Data confidentiality is the key requirement for any VPN. The confidentiality of the data is provided by the encryption algorithm. That's why it is very important to choose the optimal encryption algorithm. \parencite{Snader2006}
 
@@ -144,7 +144,29 @@ AES-256 is commonly used in VPNs. DES is not secure anymore, because the DES key
 \label{sssec:asymmetric}
 Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and the private key are mathematically related, it is not possible to find out the private key from the public key. 
 
-RSA, DSA and Elliptic Curve (ECC) are some asymmetrical algorithm. Asymmetrical encryption algorithm are used mostly in SSL VPN.
+RSA, DSA and Elliptic Curve (ECC) are some asymmetrical algorithm.
+
+\subsubsection{Diffie-Hellman (DH)}
+\label{sssec:diffie-hellman}
+Diffie-Hellman algorithm (DH) allows two devices to establish a shared secret over an unsecure network. It was published by Whitfield Diffie and Martin Hellman in 1976. Related to VPN, it is used in the IKE or Phase 1 for key exchange. 
+
+Diffie Hellman group are used to specify the strength of the session key used in the DH key exchange process. Higher DH group numbers are more secure, but require additional processing resources to compute the session key. \parencite{JajishThomas}
+\begin{itemize}
+	\item \textbf{DH group 1}: 768-bit modulus
+	\item \textbf{DH group 2}: 1024-bit modulus
+	\item \textbf{DH group 5}: 1536-bit modulus
+	\item \textbf{DH group 14}: 2048-bit modulus
+	\item \textbf{DH group 15}: 3072-bit modulus
+	\item \textbf{DH group 19}: 256-bit elliptic curve group
+	\item \textbf{DH group 20}: 384-bit elliptic curve group
+	\item \textbf{DH group 21}: 521-bit elliptic curve group
+	\item \textbf{DH group 24}: 2048-bit modulus with 256 bit Prime Order subgroup
+\end{itemize}
+
+At the moment it is strongly recommended to use at least \textbf{DH group 14}. If an encryption or authentication algorithm with a 256-bit key or higher is used, then it is recommended to use DH group 21 or 24. \parencite{StrongSwan}
+
+\subsubsection{Hashing Algorithm}
+% TODO Write about hashing algorithm (md5, sha, etc.)
 
 \subsection{IKE Phase 1}
 \label{ssec:Phase1}
