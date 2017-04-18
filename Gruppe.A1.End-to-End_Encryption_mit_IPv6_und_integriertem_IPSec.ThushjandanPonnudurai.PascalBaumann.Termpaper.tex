@@ -296,14 +296,14 @@ We expect that we will see the various phases on both clients. We expect to have
 
 \section{Experiment execution}
 \label{sec:ExpExec}
-We used two Cisco %TODO insert model of router
-where we connected the Cisco %TODO insert model of switch
+We used two Cisco 1941 routers
+where we connected the Cisco 2960 switch
 to the GigabitEthernet0/0 interfaces. Our clients where connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
 
 The configuration of the openSSL root CA server was done with the tutorial of %TODO insert link here
 After the configuration of the certificate authority, we generated two certificates for our hosts. Due to problems exporting these certificates and time constraints, we advanced to building the IPsec tunnel. As we did not have valid certificates ready yet, we opted to use a preshared key for our IPsec tunnel.
 
-Contrary to our expectations, the configuration of the IPsec tunnel on our Windows 10 client (further referred as ws01) was very simple and comprehensive. In ws01 we had to configure the tunnel rules on the firewall itself, and under the options which kind of algorithms will be used for the establishment for the tunnel. As soon as we enabled that, ws01 was starting to send proposals to our Ubuntu client. This proposal can be seen in figure \ref{fig:FirstSAProposal}
+Contrary to our expectations, the configuration of the IPsec tunnel on our Windows 10 client (further referred as ws01) was very simple and comprehensive. In ws01 we had to configure the tunnel rules on the firewall itself, and under the options which kind of algorithms will be used for the establishment for the tunnel. As soon as we enabled that, ws01 was starting to send proposals to our Ubuntu client. This proposal can be seen in figure \ref{fig:FirstSAProposal}.
 On the Ubuntu client (hereafter referred to as ws02) we noticed, that we had not yet installed an IPsec VPN client. After a short research we concluded, that StrongSwan best suits our need.
 
 \begin{figure}[htb]
