@@ -30,7 +30,7 @@
 \definecolor{lightblue}{HTML}{F0F7FD}
 \definecolor{greyblue}{HTML}{D0E3F0}
 \definecolor{darkblue}{HTML}{3A87AD}
-\newmdenv[topline=false,rightline=false,bottomline=false,linecolor=greyblue,linewidth=2pt,backgroundcolor=lightblue]{quotebox}
+\newmdenv[topline=false,rightline=false,bottomline=false,linecolor=greyblue,linewidth=2pt,backgroundcolor=lightblue]{codebox}
 % Blindtext package
 % TODO remove
 \usepackage{blindtext}
@@ -114,13 +114,13 @@ There are three types of IPv6 addresses:
 The traditional IPv6 broadcast does not exist anymore, instead the functionality is provided by specific multicast addresses. To find a router for example, one can ping FF02::2, as any router interface will subscribe to this multicast address. \parencite[142-143]{Loshin2004}
 
 The length of an IPv6 address is 128-bit. It is usually represented as 8 groups of up to 4 hexadecimal digits that are separated with colons. Each group stands for 16 bits.
-\begin{quotebox}
+\begin{codebox}
 	XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX
-\end{quotebox}
+\end{codebox}
 Here is an example of an IPv6 address.
-\begin{quotebox}
+\begin{codebox}
 	2001:db8:1234:ABCD::10
-\end{quotebox}
+\end{codebox}
 IPv6 addresses are usually divided into two equal 64-bit parts. The first 64-bit part identifies a network address and the last 64-bit part the host. \parencite[144-146]{Loshin2004}
  
 \subsubsection{IPv6 Headers}
@@ -205,7 +205,7 @@ L2TP as a protocol enables to route PPP over a layer two network. Before L2TP a 
 \subsection{IPsec}
 \label{ssec:IPsec}
 IPsec is a widely used tunneling protocol suite. As it is a suite, there are many different interlocking parts and many considerations to be made when deploying IPsec. But as stated in \cite{Bellovin2009}: \textquotedblleft These [parts] can be used to provide confidentiality, integrity, and replay protection;\textquotedblright.
-In this paragraph we want to introduce some key concepts for IPsec which will be discussed in more detail in section \ref{sec:IPsec}.
+In this paragraph we want to introduce some key concepts for IPsec which will be discussed in more detail in section \ref{sec:ISAKMP}.
 The first question one has to ask oneself is, which security protocol to use - Authentication Header (AH) or Encapsulating Security Payload (ESP), or both simultaneously. 
 
 The AH hashes the whole original IP packet (in tunnel mode) or just the higher-layer protocol header and data (in transport mode). Upon receival, the receiving party can verify these hashes and recognize tampering; this makes the AH security protocol irreconcilable with the NAT method. \parencite[2-11]{Kent2005AH}
@@ -296,12 +296,16 @@ We expect that we will see the various phases on both clients. We expect to have
 
 \section{Experiment execution}
 \label{sec:ExpExec}
-We used two Cisco 1941 routers
-where we connected the Cisco 2960 switch
-to the GigabitEthernet0/0 interfaces. Our clients where connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
 
-The configuration of the openSSL root CA server was done with the tutorial of %TODO insert link here
+\subsection{Deployment of hardware}
+We used two Cisco 1941 routers where we connected the Cisco 2960 switch to the GigabitEthernet0/0 interfaces. Our clients where connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
+
+\subsection{Configuration of OpenSSL server}
+
+The configuration of the OpenSSL root CA server was done with the tutorial of %TODO insert link here
 After the configuration of the certificate authority, we generated two certificates for our hosts. Due to problems exporting these certificates and time constraints, we advanced to building the IPsec tunnel. As we did not have valid certificates ready yet, we opted to use a preshared key for our IPsec tunnel.
+
+\subsection{Configuration of clients}
 
 Contrary to our expectations, the configuration of the IPsec tunnel on our Windows 10 client (further referred as ws01) was very simple and comprehensive. In ws01 we had to configure the tunnel rules on the firewall itself, and under the options which kind of algorithms will be used for the establishment for the tunnel. As soon as we enabled that, ws01 was starting to send proposals to our Ubuntu client. This proposal can be seen in figure \ref{fig:FirstSAProposal}.
 On the Ubuntu client (hereafter referred to as ws02) we noticed, that we had not yet installed an IPsec VPN client. After a short research we concluded, that StrongSwan best suits our need.
@@ -312,10 +316,24 @@ On the Ubuntu client (hereafter referred to as ws02) we noticed, that we had not
 	\label{fig:FirstSAProposal}
 \end{figure}
 
+The configuration of StrongSwan was done over multiple files. The core file was the ipsec.conf. In there, one defines the peers, proposals and authentication.
+In a first stage, we configured the IPsec tunnel with a preshared key.
+
+Problems arose after we finished setting up StrongSwan and started up the service. We did get SA proposals from ws01, but did not receive an answer from our ws02. Clearly, troubleshooting was needed. To enable ample debug information to show up in syslog, we had to add logging levels in the core .conf file by adding this line:
+\begin{codebox}
+	charondebug="ike 4, knl 4, cfg 4, chd 4"
+\end{codebox}
+After enabling this detailed information, we could conclude, after trial and error, that we did not have a matching IKE phase 1 SA to propose ws01. After manually configuring the phase 1 proposals on both ends (in our case AES256-SHA256 with Diffie Helman Group 14 - "2048 MODP group" in figure \ref{fig:FirstSAProposal}). We had a phase 1 connection, fter a restart of the StrongSwan service via:
+\begin{codebox}
+	sysctl 
+\end{codebox}
 
 
 \section{Experiment results}
 \label{sec:ExpRes}
+
+\section{Further improvements}
+\subsection{Automation}
 
 \section{Conclusion}
 \label{sec:Conc}
