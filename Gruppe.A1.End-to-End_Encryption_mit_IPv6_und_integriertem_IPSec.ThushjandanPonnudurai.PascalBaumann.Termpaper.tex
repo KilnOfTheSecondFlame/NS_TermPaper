@@ -1,36 +1,70 @@
 \documentclass[a4paper]{report}
+
 % Use swiss german letters
 \usepackage[utf8]{inputenc}
+
 % Language: english
 \usepackage[english]{babel}
+
 % Fancy Figures
 \usepackage{graphicx}
+
 % Use Times
 \usepackage{mathptmx}
+
+% Use Inconsolata as monospaced font
+\usepackage{inconsolata}
+
 % Display the Bibliography in the TOC
 \usepackage{tocbibind}
+
 % Better lists
 \usepackage{enumitem}
+
 % Shaded Boxes
 \usepackage[svgnames]{xcolor}
 \usepackage{framed}
 \usepackage{mdframed}
+
 % Use biblatex
 \usepackage[style=apa,backend=biber,citestyle=authoryear]{biblatex} 
+
 % Define the bibliography file
 \addbibresource{bibliography.bib}
+
 % To let LaTeX handle "
 \usepackage[autostyle, english = british]{csquotes}
 \DeclareLanguageMapping{english}{english-apa}
+
 % To have text wrap around pictures
 \usepackage{wrapfig}
-% Define Shaded box
+
+% Define new colors
 \definecolor{grey}{HTML}{C5C5C5}
 \definecolor{lightgrey}{HTML}{E6E6E6}
+\definecolor{lightgray}{HTML}{F8F8F8}
 \definecolor{lightblue}{HTML}{F0F7FD}
 \definecolor{greyblue}{HTML}{D0E3F0}
 \definecolor{darkblue}{HTML}{3A87AD}
+
+% Define nicely shaded box for code inside text
 \newmdenv[topline=false,rightline=false,bottomline=false,linecolor=greyblue,linewidth=2pt,backgroundcolor=lightblue]{codebox}
+
+% Code Syntax Highlighting
+\usepackage{listings}
+
+% Define which language to use globally
+\lstset{
+	language=bash,
+	basicstyle=\ttfamily,
+	breaklines=true,
+	commentstyle=\color{CornflowerBlue},
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\small\ttfamily,
+	backgroundcolor=\color{lightgray}
+}
+
 % Blindtext package
 % TODO remove
 \usepackage{blindtext}
@@ -323,11 +357,11 @@ Problems arose after we finished setting up StrongSwan and started up the servic
 \begin{codebox}
 	charondebug="ike 4, knl 4, cfg 4, chd 4"
 \end{codebox}
-After enabling this detailed information, we could conclude, after trial and error, that we did not have a matching IKE phase 1 SA to propose ws01. After manually configuring the phase 1 proposals on both ends (in our case AES256-SHA256 with Diffie Helman Group 14 - "2048 MODP group" in figure \ref{fig:FirstSAProposal}). We had a phase 1 connection, fter a restart of the StrongSwan service via:
+After enabling this detailed information, we could conclude, after trial and error, that we did not have a matching IKE phase 1 SA to propose ws01. After manually configuring the phase 1 proposals on both ends (in our case AES256-SHA256 with Diffie Helman Group 14 - "2048 MODP group" in figure \ref{fig:FirstSAProposal}). We had a phase 1 connection, after a restart of the StrongSwan service via:
 \begin{codebox}
-	sysctl 
+	systemctl restart strongswan
 \end{codebox}
-
+Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 connection. Troubleshooting involved trial and error, as the error we got "No CHILD\_SA found" did not help us. After looking through configuration examples on the excellent Wiki of StrongSwan \parencite{Lang2017}, we determined that the problem lies in the configuration of our peer IDs (left and right in section \ref{app-sec:ipsec.conf-P2P}). After we amended these and started pinging our peer, we had an established tunnel.
 
 \section{Experiment results}
 \label{sec:ExpRes}
@@ -337,6 +371,152 @@ After enabling this detailed information, we could conclude, after trial and err
 
 \section{Conclusion}
 \label{sec:Conc}
+
+\appendix
+
+\chapter{StrongSwan configuration}
+\label{app-ch:StrongSwan}
+
+\section{StrongSwan files location overview}
+\begin{figure}[h!]
+	\label{fig:StrongSwanFiles}
+	\includegraphics[keepaspectratio,width=\textwidth]{StrongSwan_Files.pdf}
+\end{figure}
+
+\newpage
+
+\section{ipsec.conf}
+\label{app-sec:ipsec.conf-P2P}
+\begin{lstlisting}
+# ipsec.conf - strongSwan IPsec configuration file
+
+# basic configuration
+    config setup
+    charondebug="ike 4, knl 4, cfg 4, chd 4"
+    # strictcrlpolicy=yes
+    # uniqueids = no
+
+conn %default
+    ikelifetime=480m
+    keylife=60m
+    keyexchange=ikev1
+    #authby=secret
+
+
+# Add connections here.
+conn ws01-enc-con
+    # Local Endpoint
+    left=fd00:dead:cafe:2::2
+    leftid="C=CH, ST=Zug, O=NL, CN=ws02.nl.ch"
+    leftauth=pubkey
+    leftcert=ws02.nl.ch_cert.pem
+    # Remote Endpoint
+    right=fd00:dead:cafe:1::2
+    rightid="C=CH, ST=Zug, O=NL, CN=ws01.nl.ch"
+    rightauth=pubkey
+    auto=route
+    # Encryption ciphers
+    # Phase 1 ciphers
+    ike=aes-256-sha256-modp2048
+    # Phase 2 ciphers / only ESP
+    esp=aes256gcm16-aes256gmac,aes128gcm16-aes128gmac
+\end{lstlisting}
+
+
+\section{ipsec.secrets}
+\label{app-sec:ipsec.secrets-P2P}
+\begin{lstlisting}
+# /etc/ipsec.secrets - strongSwan IPsec secrets file
+# This file holds shared secrets or RSA private keys for authentication.
+
+# RSA private key for this host, authenticating it to any other host
+# which knows the public part.
+
+: RSA ws02.nl.ch_key_unenc.pem
+#fd00:dead:cafe:2::2 : PSK superuser
+\end{lstlisting}
+
+\chapter{Root Certificate}
+
+\begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, numberstyle=\ttfamily\scriptsize, stepnumber=5, firstnumber=1, numberfirstline=false]
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 9583299007194875803 (0x84feb7ac2c34479b)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=CH, ST=Zug, O=NL, CN=rootca.nl.ch
+        Validity
+            Not Before: Apr 13 08:04:54 2017 GMT
+            Not After : Apr 12 08:04:54 2020 GMT
+        Subject: C=CH, ST=Zug, O=NL, CN=rootca.nl.ch
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:ad:5c:87:50:62:64:be:a1:c3:cf:e6:ca:48:48:
+                    01:9e:da:5d:62:fc:cf:18:e2:4d:6a:30:e0:2a:d5:
+                    ec:34:98:c4:05:90:9c:e7:2a:f1:ac:14:d1:53:c8:
+                    02:d8:07:25:ac:38:fd:db:40:2d:74:39:29:bb:9f:
+                    65:8e:28:c5:f9:27:f0:b6:71:7b:6c:ff:58:3a:b5:
+                    92:37:3d:1e:e4:34:48:67:f5:8f:a7:c2:90:18:0b:
+                    1c:79:4c:fb:04:8e:d6:a7:33:ec:ed:85:e0:3c:0e:
+                    8a:73:02:1f:06:49:30:da:46:37:ad:cb:29:86:41:
+                    f4:85:43:cc:ba:10:d8:b8:a2:2f:4d:71:1a:b3:1c:
+                    4b:f6:d3:a7:68:05:b9:af:36:c5:97:8a:1d:df:07:
+                    ac:ed:e8:49:be:8b:83:8d:2d:79:68:6f:09:14:3f:
+                    12:b2:79:4d:41:ed:00:03:ad:73:97:90:53:cf:98:
+                    2f:13:70:79:59:ed:14:8d:1d:84:29:d7:09:ea:11:
+                    a0:56:72:fc:80:e2:f9:90:ab:4b:f4:f7:d2:ab:d9:
+                    4f:13:54:3d:64:46:5b:47:2b:fa:7b:04:d6:55:99:
+                    46:ca:8f:20:df:95:79:a7:3d:59:a8:9b:03:14:7d:
+                    a5:1f:4c:8a:5b:f5:1e:cc:df:fb:9f:4f:ef:b6:5e:
+                    a0:d5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                64:DC:F2:50:E2:AD:D4:E6:2C:8E:89:9F:23:75:40:D9:1A:33:62:5B
+            X509v3 Authority Key Identifier: 
+                keyid:64:DC:F2:50:E2:AD:D4:E6:2C:8E:89:9F:23:75:40:D9:1A:33:62:5B
+
+            X509v3 Basic Constraints: 
+                CA:TRUE
+    Signature Algorithm: sha256WithRSAEncryption
+         7e:2c:f7:fa:da:f5:7b:7b:ac:e5:6e:d2:1a:77:bb:58:3b:58:
+         9c:21:54:81:37:42:cb:2e:b5:44:25:5c:91:28:2d:ef:3c:90:
+         9e:75:0d:49:fe:7e:d0:57:c7:80:62:57:19:cf:b9:74:32:fe:
+         58:c7:e6:53:de:8e:13:8a:87:51:f9:1d:39:58:83:8f:7b:85:
+         00:a1:83:51:42:34:53:23:b3:55:2e:44:11:29:b0:af:c2:77:
+         75:e8:dd:c9:60:9b:32:81:08:02:38:e2:78:2b:fc:8c:de:df:
+         a3:9b:9e:77:3d:e2:98:22:fb:f2:6c:15:82:81:99:24:6b:ae:
+         fd:f3:e9:d6:f3:92:b5:ec:70:0c:83:62:86:54:f9:e7:75:9b:
+         4e:cd:53:24:78:e1:0d:09:cd:11:6b:a3:29:d8:b5:f4:27:f4:
+         4c:40:ff:a2:a3:c4:41:87:cd:2b:17:13:66:13:d9:5c:8b:1d:
+         8d:d0:e1:bf:62:59:fa:9e:af:b0:d1:9d:38:4e:6f:06:c7:ec:
+         01:71:0c:0e:c0:07:2b:e0:fd:00:e4:c1:50:17:f7:be:88:de:
+         c7:3e:74:c5:cc:73:49:bc:b8:16:05:98:3c:b1:02:e0:93:ad:
+         b0:3c:eb:0e:c7:77:2b:61:1c:84:bf:c2:c3:16:66:b7:e4:1b:
+         49:5b:7b:e5
+-----BEGIN CERTIFICATE-----
+MIIDUTCCAjmgAwIBAgIJAIT+t6wsNEebMA0GCSqGSIb3DQEBCwUAMD8xCzAJBgNV
+BAYTAkNIMQwwCgYDVQQIDANadWcxCzAJBgNVBAoMAk5MMRUwEwYDVQQDDAxyb290
+Y2EubmwuY2gwHhcNMTcwNDEzMDgwNDU0WhcNMjAwNDEyMDgwNDU0WjA/MQswCQYD
+VQQGEwJDSDEMMAoGA1UECAwDWnVnMQswCQYDVQQKDAJOTDEVMBMGA1UEAwwMcm9v
+dGNhLm5sLmNoMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArVyHUGJk
+vqHDz+bKSEgBntpdYvzPGOJNajDgKtXsNJjEBZCc5yrxrBTRU8gC2AclrDj920At
+dDkpu59ljijF+SfwtnF7bP9YOrWSNz0e5DRIZ/WPp8KQGAsceUz7BI7WpzPs7YXg
+PA6KcwIfBkkw2kY3rcsphkH0hUPMuhDYuKIvTXEasxxL9tOnaAW5rzbFl4od3wes
+7ehJvouDjS15aG8JFD8SsnlNQe0AA61zl5BTz5gvE3B5We0UjR2EKdcJ6hGgVnL8
+gOL5kKtL9PfSq9lPE1Q9ZEZbRyv6ewTWVZlGyo8g35V5pz1ZqJsDFH2lH0yKW/Ue
+zN/7n0/vtl6g1QIDAQABo1AwTjAdBgNVHQ4EFgQUZNzyUOKt1OYsjomfI3VA2Roz
+YlswHwYDVR0jBBgwFoAUZNzyUOKt1OYsjomfI3VA2RozYlswDAYDVR0TBAUwAwEB
+/zANBgkqhkiG9w0BAQsFAAOCAQEAfiz3+tr1e3us5W7SGne7WDtYnCFUgTdCyy61
+RCVckSgt7zyQnnUNSf5+0FfHgGJXGc+5dDL+WMfmU96OE4qHUfkdOViDj3uFAKGD
+UUI0UyOzVS5EESmwr8J3dejdyWCbMoEIAjjieCv8jN7fo5uedz3imCL78mwVgoGZ
+JGuu/fPp1vOStexwDINihlT553WbTs1TJHjhDQnNEWujKdi19Cf0TED/oqPEQYfN
+KxcTZhPZXIsdjdDhv2JZ+p6vsNGdOE5vBsfsAXEMDsAHK+D9AOTBUBf3vojexz50
+xcxzSby4FgWYPLEC4JOtsDzrDsd3K2EchL/CwxZmt+QbSVt75Q==
+-----END CERTIFICATE-----
+\end{lstlisting}
 
 \newpage
 
