@@ -228,7 +228,7 @@ Unrelated to which specific implementation of TLS is used (TLS over TCP, or DTLS
 \subsection{L2TP/PPTP}
 \label{ssec:l2tppptp}
 When discussing Layer Two Tunneling Protocol (L2TP) and Point-to-Point Tunneling Protocol (PPTP), one has to first understand the predecessor of them both: Point-to-Point Protocol (PPP).
-The development of PPP arouse from the discontent with then de-facto standard for serial links SLIP. The role of SLIP was to bridge the gap between IP and serial links, which it does, but not more. The wish for a general purpose protocol, able to encapsulate multiple different higher layer protocols and with support for different physical link layer configurations. PPP was based on the ISO standards protocol HDLC and adapted the framing structure and some operation concepts from it.  \parencite{Kozierok2005}
+The development of PPP arouse from the discontent with then de-facto standard for serial links SLIP. The role of SLIP was to bridge the gap between IP and serial links, which it does, but not more. The wish for a general purpose protocol, able to encapsulate multiple different higher layer protocols and with support for different physical link layer configurations led to the development of PPP. PPP was based on the ISO standards protocol HDLC and adapted the framing structure and some operation concepts from it.  \parencite{Kozierok2005}
 
 PPTP in turn describes a protocol for tunneling PPP traffic over an IP network. It does not change the implementation or modify the encapsulated PPP traffic. As its just a vehicle for transporting PPP traffice, PPTP does not offer authentication nor encryption, as this is handled by the PPP protocol itself (with PAP/CHAP and ECP respectively). The beauty of PPTP is, that it can be encapsulated in the IP payload, so that only the two endpoints talking to each other have to implement it. PPTP has a control channel which is initiated over TCP and a modified GRE protocol for the tunnel itself. \parencite{Hamzeh1999}
 
@@ -251,7 +251,7 @@ The next consideration concerns the key management. Although manual key manageme
 \section{ISAKMP}
 \label{sec:ISAKMP}
 
-\subsection{Algorithmen \& DHs}
+\subsection{Algorithmen \& Diffie-Helman Groups}
 \label{ssec:AlgoDH}
 
 \subsection{IKE Phase 1}
@@ -263,6 +263,8 @@ After a secure IKE tunnel is established in the first phase, there is a second r
 
 \section{IPv6 with IPsec}
 \label{sec:IPv6IPsec}
+
+As written in RFC6434 \parencite{Jankiewicz2011}, "Previously, IPv6 mandated implementation of IPsec and recommended the key management approach of IKE. This document updates that recommendation by making support of the IPsec Architecture [RFC4301] a SHOULD for all IPv6 nodes". This means that one can reasonably expect to be talking to an IPsec-usable IPv6 node at all times (SHOULD implicates a developer to not just ignore this recommendation). 
 
 \chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
 \label{ch:Practical}
@@ -436,7 +438,7 @@ conn ws01-enc-con
 #fd00:dead:cafe:2::2 : PSK superuser
 \end{lstlisting}
 
-\chapter{Root Certificate}
+\chapter{Root CA Certificate}
 
 \begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, numberstyle=\ttfamily\scriptsize, stepnumber=5, firstnumber=1, numberfirstline=false]
 Certificate:
