@@ -264,7 +264,16 @@ After a secure IKE tunnel is established in the first phase, there is a second r
 \section{IPv6 with IPsec}
 \label{sec:IPv6IPsec}
 
-As written in RFC6434 \parencite{Jankiewicz2011}, "Previously, IPv6 mandated implementation of IPsec and recommended the key management approach of IKE. This document updates that recommendation by making support of the IPsec Architecture [RFC4301] a SHOULD for all IPv6 nodes". This means that one can reasonably expect to be talking to an IPsec-usable IPv6 node at all times (SHOULD implicates a developer to not just ignore this recommendation). 
+As written in RFC6434 \parencite{Jankiewicz2011}, "Previously, IPv6 mandated implementation of IPsec and recommended the key management approach of IKE. This document updates that recommendation by making support of the IPsec Architecture [RFC4301] a SHOULD for all IPv6 nodes". This means that one can reasonably expect to be talking to an IPsec-usable IPv6 node at all times (SHOULD implicates a developer to not just ignore this recommendation).
+
+One can elevate this fact to encrypt all internal IPv6 traffic, as all IPv6 nodes should technically be able to establish IPsec tunnels. We will explore the viability of such a solution in regards to a heterogeneous host environment in chapter \ref{ch:Practical}.
+
+However, these considerations are based on a recommendation of the standard. One has to ask himself, how much this really translates to the real world, especially in business environments, where Microsoft and Citrix are some major players.
+In \cite{MicrosoftTechnet2003} we can see that Microsoft started implementing IPsec in an Active Directory environment since Microsoft Server 2003 and the Vista operating system. There IPsec can be configured over group policy with AD x.509 certificates for a localized key management.
+
+Citrix supports the IPv6 stack with at least update 7.6, but no words on the IPsec implementation itself.
+
+And support for IPsec in the IPv6 stack has been added to the Linux Kernel from version 2.6 upwards based on the KAME project.
 
 \chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
 \label{ch:Practical}
