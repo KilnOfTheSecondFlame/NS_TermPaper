@@ -166,7 +166,20 @@ Diffie Hellman group are used to specify the strength of the session key used in
 At the moment it is strongly recommended to use at least \textbf{DH group 14}. If an encryption or authentication algorithm with a 256-bit key or higher is used, then it is recommended to use DH group 21 or 24. \parencite{StrongSwan}
 
 \subsubsection{Hashing Algorithm}
-% TODO Write about hashing algorithm (md5, sha, etc.)
+\label{sssec:hashing_algo}
+"Hash algorithms are also called \textit{digital fingerprinting algorithms}. They are irreversible functions that provide a fixed-size hash based on various inputs. Irreversibility and collision resistance are necessary attributes for successful hash functions." \parencite{Kampanakis2015}
+Message-Digest-Algorithm 5 (MD5), Secure Hash Algorithm 1 (SHA-1) or SHA-2 are some example of hashing algorith. MD5 and SHA-1 are \textbf{insecure} and should not be used. 
+
+A Keyed-Hash Message Authentication Code (HMAC) is a sort of message authentication codes (MAC) that uses a secret key and a cryptographic hash function. It is used for 
+\textbf{integrity verification}.
+
+There are existing several HMAC algorithms with various length of key strengths. Some of them are listed in the following list:
+\begin{itemize}
+	\item HMAC-SHA-2 with 512-, 384-, 256-, 192-, 128-bits key length
+	\item AES-GMAC with 256-, 192- or 128-bits key lengths (Same as AES-GCM, but without encryption)
+	\item SHA-1 HMAC
+	\item MD5 HMAC
+\end{itemize}
 
 \subsection{IKE Phase 1}
 \label{ssec:Phase1}
