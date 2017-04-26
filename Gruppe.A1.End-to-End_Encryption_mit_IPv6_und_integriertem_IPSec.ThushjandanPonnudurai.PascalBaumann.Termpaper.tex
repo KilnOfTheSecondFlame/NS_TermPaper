@@ -199,11 +199,11 @@ The initiator and recipient send three two-way exchanges, with a total of six me
 \label{sssec:Phase1:aggressiveMode}
 The initiator and recipient have only two exchanges, with a total of three messages:
 \begin{itemize}
-	\item First message. Almost everything will be sent: SA proposes, DH public key, keying material and also the its own identity.
+	\item First message. Almost everything will be sent: SA proposes, DH public key, keying material and also its own identity.
 	\item Second message. The receiver authenticates the initiator and sends everything back that is needed to complete the exchange.
 	\item Third message. The initiator authenticates the recipient and confirms the exchange.
 \end{itemize}
-Aggressive mode is faster than the main mode, but it does not provide the identity protection! The reason is that both sides exchanges their identities before a secure channel exists. \parencite{JuniperNetworks2016}
+Aggressive mode is faster than the main mode, but it does not provide the identity protection! The reason therefore is, that both sides exchanges their identities before a secure channel exists. \parencite{JuniperNetworks2016}
 
 \subsection{IKE Phase 2}
 \label{ssec:Phase2}
