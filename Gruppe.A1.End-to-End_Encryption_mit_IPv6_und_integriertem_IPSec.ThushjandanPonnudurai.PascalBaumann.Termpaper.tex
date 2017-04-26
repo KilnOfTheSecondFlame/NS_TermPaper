@@ -138,17 +138,17 @@ Some symmetrical algorithms:
 	\item CAST (128-bit)
 	\item Camellia (128, 192 or 256 bit)
 \end{itemize}
-AES-256 is commonly used in VPNs. DES is not secure anymore, because the DES key can be cracked in less than 24 hours.
+AES-256 is commonly used in VPNs. DES is not secure anymore, because a DES key can be cracked in less than 24 hours. \parencite{Bollapragada2005}
 
 \subsubsection{Asymmetric}
 \label{sssec:asymmetric}
-Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and the private key are mathematically related, it is not possible to find out the private key from the public key. 
+Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and private key are mathematically related, but it is not possible to find out the private key from the public key. 
 
-RSA, DSA and Elliptic Curve (ECC) are some asymmetrical algorithm.
+RSA, DSA and Elliptic Curve (ECC) are some asymmetrical algorithms. \parencite{Bollapragada2005}
 
 \subsubsection{Diffie-Hellman (DH)}
 \label{sssec:diffie-hellman}
-Diffie-Hellman algorithm (DH) allows two devices to establish a shared secret over an unsecure network. It was published by Whitfield Diffie and Martin Hellman in 1976. Related to VPN, it is used in the IKE or Phase 1 for key exchange. 
+With Diffie-Hellman algorithm (DH) two devices can establish a shared secret over an unsecure network. It was published by Whitfield Diffie and Martin Hellman in 1976. Related to VPN, it is used in IKE Phase 1 and 2 for key exchange. 
 
 Diffie Hellman group are used to specify the strength of the session key used in the DH key exchange process. Higher DH group numbers are more secure, but require additional processing resources to compute the session key. \parencite{JajishThomas}
 \begin{itemize}
@@ -168,7 +168,7 @@ At the moment it is strongly recommended to use at least \textbf{DH group 14}. I
 \subsubsection{Hashing Algorithm}
 \label{sssec:hashing_algo}
 "Hash algorithms are also called \textit{digital fingerprinting algorithms}. They are irreversible functions that provide a fixed-size hash based on various inputs. Irreversibility and collision resistance are necessary attributes for successful hash functions." \parencite{Kampanakis2015}
-Message-Digest-Algorithm 5 (MD5), Secure Hash Algorithm 1 (SHA-1) or SHA-2 are some example of hashing algorith. MD5 and SHA-1 are \textbf{insecure} and should not be used. 
+Message-Digest-Algorithm 5 (MD5), Secure Hash Algorithm 1 (SHA-1) or SHA-2 are some examples of hashing algorithms. MD5 and SHA-1 are \textbf{insecure} and should not be used. 
 
 A Keyed-Hash Message Authentication Code (HMAC) is a sort of message authentication codes (MAC) that uses a secret key and a cryptographic hash function. It is used for 
 \textbf{integrity verification}.
@@ -183,7 +183,27 @@ There are existing several HMAC algorithms with various length of key strengths.
 
 \subsection{IKE Phase 1}
 \label{ssec:Phase1}
+"Phase 1 of an AutoKey Internet Key Exchange (IKE) tunnel negotiation consists of the exchange of proposals for how to authenticate and secure the channel." \parencite{JuniperNetworks2016} The result of this phase is the establishment of an ISAKMP/IKE security association (SA). Mandatory parameters for negotiating an IKE SA are the encryption algorithm, hash algorithm, authentication mode (preshared-key or RSA/DSA certificates) and Diffie-Hellman (DH) group.
 
+IKE Phase 1 offers two modes: Main mode and aggressive mode.
+\subsubsection{Main mode}
+\label{sssec:Phase1:mainMode}
+The initiator and recipient send three two-way exchanges, with a total of six messages:
+\begin{itemize}
+	\item First exchange. Proposes and accepts the encryption and authentication algorithms.
+	\item Second exchange. Executes a DH exchange and exchanges keying material. After this stage  the remaining messages (Third exchange) are encrypted.
+	\item Third exchange.  Verifies the other side's identity.
+\end{itemize}
+
+\subsubsection{Aggressive Mode}
+\label{sssec:Phase1:aggressiveMode}
+The initiator and recipient have only two exchanges, with a total of three messages:
+\begin{itemize}
+	\item First message. Almost everything will be sent: SA proposes, DH public key, keying material and also the its own identity.
+	\item Second message. The receiver authenticates the initiator and sends everything back that is needed to complete the exchange.
+	\item Third message. The initiator authenticates the recipient and confirms the exchange.
+\end{itemize}
+Aggressive mode is faster than the main mode, but it does not provide the identity protection! The reason is that both sides exchanges their identities before a secure channel exists. \parencite{JuniperNetworks2016}
 
 \subsection{IKE Phase 2}
 \label{ssec:Phase2}
