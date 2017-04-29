@@ -8,7 +8,5 @@ script:
   - biber *.bcf
   - pdflatex -interaction=nonstopmode -halt-on-error *.tex
   - pdflatex -interaction=nonstopmode -halt-on-error *.tex
-before-deploy:
-  skip_cleanup: true
-after-deploy:
+after-success:
   - ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-latest.pdf && ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-{TRAVIS_BUILD_NUMBER}.pdf'
