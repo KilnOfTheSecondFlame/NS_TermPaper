@@ -8,9 +8,7 @@ script:
   - biber *.bcf
   - pdflatex -interaction=nonstopmode -halt-on-error *.tex
   - pdflatex -interaction=nonstopmode -halt-on-error *.tex
-deploy:
-  provider: release
-  file: "Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf"
+before-deploy:
   skip_cleanup: true
 after-deploy:
   - '[ -f ~/.dropbox_uploader ] && ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-latest.pdf && ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-{TRAVIS_BUILD_NUMBER}.pdf'
