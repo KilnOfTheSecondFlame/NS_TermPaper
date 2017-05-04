@@ -313,7 +313,7 @@ The initiator and recipient send three two-way exchanges, with a total of six me
 \label{sssec:Phase1:aggressiveMode}
 The initiator and recipient have only two exchanges, with a total of three messages:
 \begin{itemize}
-	\item First message. Almost everything will be sent: SA proposes, DH public key, keying material and also its own identity.
+	\item First message. Almost everything will be sent: SA proposals, DH public key, keying material and also its own identity.
 	\item Second message. The receiver authenticates the initiator and sends everything back that is needed to complete the exchange.
 	\item Third message. The initiator authenticates the recipient and confirms the exchange.
 \end{itemize}
@@ -332,7 +332,7 @@ After a secure IKE tunnel is established in the first phase, there is a second r
 \section{Description of the experiment}
 \label{sec:ExpDesc}
 
-In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script, that periodically sends a String via ncat to the receiver.
+In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
 
 \subsection{Experiment layout}
 \label{ssec:ExpLayout}
@@ -394,7 +394,7 @@ We expect that we will see the various phases on both clients. We expect to have
 \label{sec:ExpExec}
 We used two Cisco %TODO insert model of router
 where we connected the Cisco %TODO insert model of switch
-to the GigabitEthernet0/0 interfaces. Our clients where connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
+to the GigabitEthernet0/0 interfaces. Our clients were connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
 
 The configuration of the openSSL root CA server was done with the tutorial of %TODO insert link here
 After the configuration of the certificate authority, we generated two certificates for our hosts. Due to problems exporting these certificates and time constraints, we advanced to building the IPsec tunnel. As we did not have valid certificates ready yet, we opted to use a preshared key for our IPsec tunnel.
