@@ -1,0 +1,12 @@
+sudo: required
+dist: trusty
+before_install:
+  - sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-full && sudo apt-get install -y biber
+  - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_d9a5ed78891a_key -iv $encrypted_d9a5ed78891a_iv -in .dropbox_uploader.enc -out .dropbox_uploader -d || curl "https://raw.githubusercontent.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh" -o dropbox_uploader.sh || chmod +x dropbox_uploader.sh'
+script:
+  - pdflatex -interaction=nonstopmode -halt-on-error *.tex
+  - biber *.bcf
+  - pdflatex -interaction=nonstopmode -halt-on-error *.tex
+  - pdflatex -interaction=nonstopmode -halt-on-error *.tex
+after-success:
+  - ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-latest.pdf && ./dropbox_uploader.sh upload Gruppe.A1.End-to-End_Encryption_mit_IPv6_und_integriertem_IPSec.ThushjandanPonnudurai.PascalBaumann.Termpaper.pdf /NSTermPaper/document-{TRAVIS_BUILD_NUMBER}.pdf'
