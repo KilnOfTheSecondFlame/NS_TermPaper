@@ -51,6 +51,7 @@
 	\vspace*{3\baselineskip} % Whitespace at the bottom of the page
 	\endgroup}
 
+% Define the path were images are found
 \graphicspath{{./img/}}
 
 \begin{document}
@@ -213,19 +214,116 @@ Analogous to the AH protocol, ESP can work both in transport and tunnel mode. Si
 
 The next consideration concerns the key management. Although manual key management can be used, it's generally not advised and disables the replay detection mechanism.The most widely used key management is the Internet Key Exchange (IKE), which is available in its original form (IKEv1) and in a new, simpler version (IKEv2). In network environment where mainly Microsoft systems are used, the usage of Kerberised Internet Negotiation of Keys (KINK) is available, as this depends on the Kerberos system. \parencite[4-5]{Bellovin2009}
 
-\section{IPsec}
-\label{sec:IPsec}
+\section{ISAKMP}
+\label{sec:ISAKMP}
 
-\subsection{Algorithmen \& DHs}
+\subsection{Algorithms \& DHs}
 \label{ssec:AlgoDH}
+Data confidentiality is the key requirement for any VPN. The confidentiality of the data is provided by the encryption algorithm. That's why it is very important to choose the optimal encryption algorithm. \parencite{Snader2006}
 
-\subsection{Phase 1}
+Every encryption algorithm can be theoretically broken with given enough computing resources. With a brute-force attack every combination of a key will be try out. "For a 128-bit key, there are $2^{128}$ combinations to attempt, which requires extensive computing resources." according to \cite{HigashiMichael2013}. 
+The data confidentiality can be only ensured with the correct key length (ex. for AES more than 256-bits or for RSA more than 2048-bits). 
+
+It is possible to decrypt a message without knowing the key with enough computing resources and time. But the decrypted information will be too old and not more relevant for the attacker. 
+That's why it is very important to choose strong and long passwords/keys to make the decryption difficult for the attacker.\parencite{HigashiMichael2013}
+
+There are two categories of cryptography algorithms: Symmetric and Asymmetric
+
+\subsubsection{Symmetric}
+\label{sssec:symmetric}
+Sender and receiver are using the same secret key to encrypt and to decrypt the messages. The main problem with these categories of algorithms is finding a way to distribute the key without anyone else finding it.
+
+Some symmetrical algorithms:
+\begin{itemize}
+	\item AES (128, 192 or 256 bit)
+	\item DES (56-bit)
+	\item Triple-DES or 3DES (3x 56-bit = 168-bit).
+	\item Blowfish (128, 192 or 256 bit)
+	\item CAST (128-bit)
+	\item Camellia (128, 192 or 256 bit)
+\end{itemize}
+AES-256 is commonly used in VPNs. DES is not secure anymore, because a DES key can be cracked in less than 24 hours. \parencite{Bollapragada2005}
+
+\subsubsection{Asymmetric}
+\label{sssec:asymmetric}
+Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and private key are mathematically related, but it is not possible to find out the private key from the public key. 
+
+The key advantage of an asymmetrical algorithm is the ease of distribution of the encryption/decryption key. Only the private key must be kept securely. The public key can be distributed to anyone.
+A drawback for asymmetric algorithms is, that they are typically slower than symmetrical algorithms. They involve exponential operations which need more CPU cycles. Asymmetric algorithms are often used to secure key exchanges rather than for bulk data encryption.
+
+RSA, DSA and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms. \parencite{Bollapragada2005}
+
+Figure \ref{fig:asym_alg} shows how a public key encryption typically works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
+\begin{figure}[htb]
+	\includegraphics[width=\linewidth]{asym_alg.jpg}
+	\caption{Public Key Encryption process}
+	\label{fig:asym_alg}
+\end{figure}
+
+\subsubsection{Diffie-Hellman (DH)}
+\label{sssec:diffie-hellman}
+With Diffie-Hellman algorithm (DH) two devices can establish a shared secret over an unsecure network. It was published by Whitfield Diffie and Martin Hellman in 1976. Related to VPN, it is used in IKE Phase 1 and 2 for key exchange. 
+
+Diffie Hellman group are used to specify the strength of the session key used in the DH key exchange process. Higher DH group numbers are more secure, but require additional processing resources to compute the session key. \parencite{JajishThomas}
+\begin{itemize}
+	\item \textbf{DH group 1}: 768-bit modulus
+	\item \textbf{DH group 2}: 1024-bit modulus
+	\item \textbf{DH group 5}: 1536-bit modulus
+	\item \textbf{DH group 14}: 2048-bit modulus
+	\item \textbf{DH group 15}: 3072-bit modulus
+	\item \textbf{DH group 19}: 256-bit elliptic curve group
+	\item \textbf{DH group 20}: 384-bit elliptic curve group
+	\item \textbf{DH group 21}: 521-bit elliptic curve group
+	\item \textbf{DH group 24}: 2048-bit modulus with 256 bit Prime Order subgroup
+\end{itemize}
+
+At the moment it is strongly recommended to use at least \textbf{DH group 14}. If an encryption or authentication algorithm with a 256-bit key or higher is used, then it is recommended to use DH group 21 or 24. \parencite{StrongSwan}
+
+\subsubsection{Hashing Algorithm}
+\label{sssec:hashing_algo}
+"Hash algorithms are also called \textit{digital fingerprinting algorithms}. They are mathematically irreversible functions that provide a fixed-size hash based on various inputs. Irreversibility and collision resistance are necessary attributes for successful hash functions." \parencite{Kampanakis2015}
+Message-Digest-Algorithm 5 (MD5), Secure Hash Algorithm 1 (SHA-1) or SHA-2 are some examples of hashing algorithms. MD5 and SHA-1 are \textbf{insecure} and should not be used anymore. 
+
+A Keyed-Hash Message Authentication Code (HMAC) is a type of message authentication codes (MAC) that uses a secret key and a cryptographic hash function. It is used for 
+\textbf{integrity verification}.
+
+There are existing several HMAC algorithms with various key length. Some of them are listed in the following list:
+\begin{itemize}
+	\item HMAC-SHA-2 with 512-, 384-, 256-, 192-, 128-bits key length
+	\item AES-GMAC with 256-, 192- or 128-bits key lengths (Same as AES-GCM, but without encryption)
+	\item SHA-1 HMAC
+	\item MD5 HMAC
+\end{itemize}
+
+\subsection{IKE Phase 1}
 \label{ssec:Phase1}
+"Phase 1 of an AutoKey Internet Key Exchange (IKE) tunnel negotiation consists of the exchange of proposals for how to authenticate and secure the channel." \parencite{JuniperNetworks2016} The result of this phase is the establishment of an ISAKMP/IKE security association (SA). Mandatory parameters for negotiating an IKE SA are the encryption algorithm, hash algorithm, authentication mode (preshared-key or RSA/DSA certificates) and Diffie-Hellman (DH) group.
 
-\subsection{Phase 2}
+IKE Phase 1 offers two modes: Main mode and aggressive mode.
+\subsubsection{Main mode}
+\label{sssec:Phase1:mainMode}
+The initiator and recipient send three two-way exchanges, with a total of six messages:
+\begin{itemize}
+	\item First exchange. Proposes and accepts the encryption and authentication algorithms.
+	\item Second exchange. Executes a DH exchange and exchanges keying material. After this stage  the remaining messages (Third exchange) are encrypted.
+	\item Third exchange.  Verifies the other side's identity.
+\end{itemize}
+
+\subsubsection{Aggressive Mode}
+\label{sssec:Phase1:aggressiveMode}
+The initiator and recipient have only two exchanges, with a total of three messages:
+\begin{itemize}
+	\item First message. Almost everything will be sent: SA proposals, DH public key, keying material and also its own identity.
+	\item Second message. The receiver authenticates the initiator and sends everything back that is needed to complete the exchange.
+	\item Third message. The initiator authenticates the recipient and confirms the exchange.
+\end{itemize}
+Aggressive mode is faster than the main mode, but it does not provide the identity protection! The reason therefore is, that both sides exchanges their identities before a secure channel exists. \parencite{JuniperNetworks2016}
+
+\subsection{IKE Phase 2}
 \label{ssec:Phase2}
+After a secure IKE tunnel is established in the first phase, there is a second round of exchanging key information and building security associations (SA). "A security association (SA) is a set of policy and key(s) used to protect information. The ISAKMP SA is the shared policy and key(s) used by the negotiating peers in this protocol to protect their communication." \parencite{Harkins1998} After obtaining possibly multiple SAs, the IPsec tunnel is finally formed and the peers exchange information encrypted with the SAs. In the so called quick mode, the peers negotiate a common IPsec policy and secret keying material, which in turn lead to the IPsec SAs. If Perfect Forward Secrecy (PFS) is demanded, a new Diffie-Helman key exchange is performed through the secure ISAKMP tunnel. This ensures the keys from phase one be completely unrelated to the keys from phase two. The drawback of this is the additional computations needed to complete the DH key exchange.
 
-\section{IPv6 mit IPsec}
+\section{IPv6 with IPsec}
 \label{sec:IPv6IPsec}
 
 \chapter[Practical part\\Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment]{Practical part\\\large{Client-to-Client IPsec VPN with an OpenSSL CA in a mixed host environment}}
@@ -234,11 +332,75 @@ The next consideration concerns the key management. Although manual key manageme
 \section{Description of the experiment}
 \label{sec:ExpDesc}
 
+In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
+
+\subsection{Experiment layout}
+\label{ssec:ExpLayout}
+
+\begin{figure}[htb]
+	\includegraphics[keepaspectratio, width = \linewidth]{experiment_layout}
+	\caption{The setup which will be used in our experiment}
+	\label{fig:exp_layout}
+\end{figure}
+
+\subsection{Network addressing concept}
+\subsubsection{client network 01}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr01 & FD00:DEAD:CAFE:1::1/64 \\ 
+	\hline 
+	ws01 & FD00:DEAD:CAFE:1::2/64 \\ 
+	\hline 
+\end{tabular} 
+
+\subsubsection{client network 02}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr02 & FD00:DEAD:CAFE:2::1/64 \\ 
+	\hline 
+	ws02 & FD00:DEAD:CAFE:2::2/64 \\ 
+	\hline 
+\end{tabular} 
+
+\subsubsection{transport network}
+\begin{tabular}{|c|c|}
+	\hline 
+	\textbf{device} & \textbf{IPv6 address} \\ 
+	\hline 
+	rtr01 & FD00:DEAD:CAFE:3::1/64 \\ 
+	\hline 
+	rtr02 & FD00:DEAD:CAFE:3::2/64 \\ 
+	\hline 
+	rootCA & FD00:DEAD:CAFE:3::A/64 \\ 
+	\hline 
+\end{tabular} 
+
 \section{Expected results}
 \label{sec:ExpectedResult}
+We expect that we will see the various phases on both clients. We expect to have problems with the algorithms used, specifically we expect that the Windows client will have predefined SAs which we won't be able to change. Therefore we will have to amend our Ubuntu client to match the requirements of his peer.
+
+\begin{figure}[htb]
+	\includegraphics[width=\linewidth]{Testscript_unencrypted.png}
+	\caption{TCP communication between hosts, captured in Wireshark}
+	\label{fig:TestUnencrypted}
+\end{figure}
+
 
 \section{Experiment execution}
 \label{sec:ExpExec}
+We used two Cisco %TODO insert model of router
+where we connected the Cisco %TODO insert model of switch
+to the GigabitEthernet0/0 interfaces. Our clients were connected to the GigabitEthernet0/1 interfaces respectively. The setup of the whole network was done without a problem. After testing our connections (to the router and our peer) and recognising that the Windows Firewall was blocking our connection attempts, we tested the viability of our test script. After installing the necessary components (nmap and Zenmap) the script was sending our test string without a problem, and we were able to catch this traffic with our MITM machine as can be seen in figure \ref{fig:TestUnencrypted}. 
+
+The configuration of the openSSL root CA server was done with the tutorial of %TODO insert link here
+After the configuration of the certificate authority, we generated two certificates for our hosts. Due to problems exporting these certificates and time constraints, we advanced to building the IPsec tunnel. As we did not have valid certificates ready yet, we opted to use a preshared key for our IPsec tunnel.
+
+Contrary to our expectations, the configuration of the IPsec tunnel on our Windows 10 client (further referred as ws01) was very simple and comprehensive. In ws01 we had to configure the tunnel rules on the firewall itself, and under the options which kind of algorithms will be used for the establishment for the tunnel.
+On the Ubuntu client (hereafter referred to as ws02) we noticed, that we had not yet installed an IPsec VPN client. After a short research we concluded, that StrongSwan best suits our need.
 
 \section{Experiment results}
 \label{sec:ExpRes}
