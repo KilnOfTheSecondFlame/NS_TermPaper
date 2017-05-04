@@ -249,11 +249,11 @@ AES-256 is commonly used in VPNs. DES is not secure anymore, because a DES key c
 Asymmetrical algorithms, also known as public key algorithm, use separate keys for encryption and decryption. The public key is used for the encryption and can be made public. The private key is used for decryption and must be kept secret. The public key and private key are mathematically related, but it is not possible to find out the private key from the public key. 
 
 The key advantage of an asymmetrical algorithm is the ease of distribution of the encryption/decryption key. Only the private key must be kept securely. The public key can be distributed to anyone.
-A drawback for asymmetric algorithms is, that they are typically slower than symmetrical algorithms. They involves exponential operations, which needs more CPU cycles. Asymmetric algorithms are often used to secure key exchanges rather than used for bulk data encryption.
+A drawback for asymmetric algorithms is, that they are typically slower than symmetrical algorithms. They involve exponential operations which need more CPU cycles. Asymmetric algorithms are often used to secure key exchanges rather than for bulk data encryption.
 
 RSA, DSA and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms. \parencite{Bollapragada2005}
 
-Figure \ref{fig:asym_alg} shows how typically a public key encryption works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
+Figure \ref{fig:asym_alg} shows how a public key encryption typically works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
 \begin{figure}[htb]
 	\includegraphics[width=\linewidth]{asym_alg.jpg}
 	\caption{Public Key Encryption process}
