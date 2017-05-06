@@ -468,9 +468,30 @@ After enabling this detailed information, we could conclude, after trial and err
 \begin{codebox}
 	systemctl restart strongswan
 \end{codebox}
-Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 connection. Troubleshooting involved trial and error, as the error we got "No CHILD\_SA found" did not help us. After looking through configuration examples on the excellent Wiki of StrongSwan \parencite{Lang2017}, we determined that the problem lies in the configuration of our peer IDs (left and right in section \ref{app-sec:ipsec.conf-P2P}). After we amended these and started pinging our peer, we had an established tunnel.
+Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 connection. Troubleshooting involved trial and error, as the error we got "No CHILD\_SA found" did not help us. After looking through configuration examples on the excellent Wiki of StrongSwan \parencite{Lang2017}, we determined that the problem lies in the configuration of our peer IDs (left and right in section \ref{app-sec:ipsec.conf-P2P}). After we amended these and started pinging our peer, we had an established tunnel and weren't able to listen in on the traffic anymore. This can be seen in figure \ref{fig:TrafficEnc}.
 
-% Pascal : Finish writeup
+\begin{figure}[htb]
+	\label{fig:TrafficEnc}
+	\includegraphics[width=\linewidth,keepaspectratio]{Traffic_encrypted}
+	\caption{Encrypted traffic between ws01 and ws02}
+\end{figure}
+
+\subsection{Migrating from host to host to subnet}
+\label{ssec:MigHost}
+With an established and working tunnel between our hosts, we wanted to test the ability to scale that to a whole network. On Microsoft this is reasonably simple and just requires changing the remote endpoint to a whole subnet. After disconnecting the tunnel again, we tested if ws01 is still able to bring it up again, which it could and did without a problem.
+
+After doing the same on ws02, we noticed that our linux client is not able to bring the tunnel up again. After searching the wiki and troubleshooting, we found the problem: "a range (10.1.0.0-10.2.255.255) or a subnet (10.1.0.0/16) can be specified, and multiple addresses, ranges and subnets can be separated by commas. While one can freely combine these items, to initiate the connection at least one non-range/subnet is required." \parencite{Lang2017StrongSwan}
+Explicitly adding the host address of ws01 led to the tunnel getting initialised by ws02 again. However, changing the IP address of ws01 to another in the same subnet led to ws02 accepting IPsec proposals but not initating them again. The way we tested this was:
+
+\begin{enumerate}
+	\item Bringing tunnel down by restarting the StrongSwan service on ws02
+	\item Changing desired configuration
+	\item Start ping the other endpoint from the host we wanted to initiate the connection
+	\item Checking Phase 1\&2 Proposals in MITM
+	\item Checking IPsec status on ws01 and ws02
+\end{enumerate}
+
+We concluded that this was by design, which relegated our ws02 to a server role. After this we finished our experiment.
 
 \section{Experiment results}
 \label{sec:ExpRes}
