@@ -377,7 +377,7 @@ And support for IPsec in the IPv6 stack has been added to the Linux Kernel from 
 \section{Description of the experiment}
 \label{sec:ExpDesc}
 
-In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
+In our experiment we will connect two host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
 
 \subsection{Experiment layout}
 \label{ssec:ExpLayout}
@@ -495,7 +495,7 @@ We concluded that this was by design, which relegated our ws02 to a server role.
 
 \section{Experiment results}
 \label{sec:ExpRes}
-% Pascal : brief summary
+IPsec support is very well implemented in Microsoft Windows 10, with a variety of configuration options and a comprehensive user interface. This led to a very uncomplicated setup of client ws01. Linux on the other hand (or in our case Ubuntu) ships with kernel support since 2.6, but this is only the kernel side. User mode configuration of tunnels need additional software. StrongSwan, in our case, has a logical structure of its files, but the usability and simplicity of configuration is lacking. One can argue that security should not be a simple matter, but Microsoft demonstrates that simplicity and security are not mutually exclusive. And as we have found out in subsection \ref{ssec:MigHost}, we can not promiscuously initialise tunnels to hosts in subnets (albeit specified).
 
 \section{Further improvements}
 \subsection{Automation}
