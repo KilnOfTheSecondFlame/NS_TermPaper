@@ -493,9 +493,19 @@ Explicitly adding the host address of ws01 led to the tunnel getting initialised
 
 We concluded that this was by design, which relegated our ws02 to a server role. After this we finished our experiment.
 
+Our assumption was wrong, of course. Further research by Mr Thushjandan revealed, that we should have used:
+
+\begin{codebox}
+	right=\%any6
+	
+	\noindent rightsubnet=fd00:dead:cafe:1::/64
+\end{codebox}
+
+instead of "right=\%any", which can be seen in the feature request for StrongSwan in \cite{Brunner2012}. We have appended the working config in appendix \ref{app-sec:WorkingConf}.
+
 \section{Experiment results}
 \label{sec:ExpRes}
-IPsec support is very well implemented in Microsoft Windows 10, with a variety of configuration options and a comprehensive user interface. This led to a very uncomplicated setup of client ws01. Linux on the other hand (or in our case Ubuntu) ships with kernel support since 2.6, but this is only the kernel side. User mode configuration of tunnels need additional software. StrongSwan, in our case, has a logical structure of its files, but the usability and simplicity of configuration is lacking. One can argue that security should not be a simple matter, but Microsoft demonstrates that simplicity and security are not mutually exclusive. And as we have found out in subsection \ref{ssec:MigHost}, we can not promiscuously initialise tunnels to hosts in subnets (albeit specified).
+IPsec support is very well implemented in Microsoft Windows 10, with a variety of configuration options and a comprehensive user interface. This led to a very uncomplicated setup of client ws01. Linux on the other hand (or in our case Ubuntu) ships with kernel support since 2.6, but this is only the kernel side. User mode configuration of tunnels need additional software. StrongSwan, in our case, has a logical structure of its files, but the usability and simplicity of configuration is lacking. One can argue that security should not be a simple matter, but Microsoft demonstrates that simplicity and security are not mutually exclusive. 
 
 \section{Further improvements}
 \subsection{Automation}
@@ -568,6 +578,9 @@ conn ws01-enc-con
 : RSA ws02.nl.ch_key_unenc.pem
 #fd00:dead:cafe:2::2 : PSK superuser
 \end{lstlisting}
+
+\section{ipsec.conf for dynamic host tunneling}
+\label{app-sec:WorkingConf}
 
 \chapter{Root CA Certificate}
 
