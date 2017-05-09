@@ -377,7 +377,7 @@ And support for IPsec in the IPv6 stack has been added to the Linux Kernel from 
 \section{Description of the experiment}
 \label{sec:ExpDesc}
 
-In our experiment we will connect to host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
+In our experiment we will connect two host machines in separate IPv6 networks over two routers, as shown in figure \ref{fig:exp_layout}. On our connecting network, we will have a certificate authority for our local domain nl.ch and a machine running Wireshark. The man-in-the-middle machine will be our control, if the transmission between the two hosts is indeed encrypted or not. For that we will prepare a script which periodically sends a String via ncat to the receiver.
 
 \subsection{Experiment layout}
 \label{ssec:ExpLayout}
@@ -468,13 +468,44 @@ After enabling this detailed information, we could conclude, after trial and err
 \begin{codebox}
 	systemctl restart strongswan
 \end{codebox}
-Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 connection. Troubleshooting involved trial and error, as the error we got "No CHILD\_SA found" did not help us. After looking through configuration examples on the excellent Wiki of StrongSwan \parencite{Lang2017}, we determined that the problem lies in the configuration of our peer IDs (left and right in section \ref{app-sec:ipsec.conf-P2P}). After we amended these and started pinging our peer, we had an established tunnel.
+Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 connection. Troubleshooting involved trial and error, as the error we got "No CHILD\_SA found" did not help us. After looking through configuration examples on the excellent Wiki of StrongSwan \parencite{Lang2017}, we determined that the problem lies in the configuration of our peer IDs (left and right in section \ref{app-sec:ipsec.conf-P2P}). After we amended these and started pinging our peer, we had an established tunnel and weren't able to listen in on the traffic anymore. This can be seen in figure \ref{fig:TrafficEnc}.
 
-% Pascal : Finish writeup
+\begin{figure}[htb]
+	\label{fig:TrafficEnc}
+	\includegraphics[width=\linewidth,keepaspectratio]{Traffic_encrypted}
+	\caption{Encrypted traffic between ws01 and ws02}
+\end{figure}
+
+\subsection{Migrating from host to host to subnet}
+\label{ssec:MigHost}
+With an established and working tunnel between our hosts, we wanted to test the ability to scale that to a whole network. On Microsoft this is reasonably simple and just requires changing the remote endpoint to a whole subnet. After disconnecting the tunnel again, we tested if ws01 is still able to bring it up again, which it could and did without a problem.
+
+After doing the same on ws02, we noticed that our linux client is not able to bring the tunnel up again. After searching the wiki and troubleshooting, we found the problem: "a range (10.1.0.0-10.2.255.255) or a subnet (10.1.0.0/16) can be specified, and multiple addresses, ranges and subnets can be separated by commas. While one can freely combine these items, to initiate the connection at least one non-range/subnet is required." \parencite{Lang2017StrongSwan}
+Explicitly adding the host address of ws01 led to the tunnel getting initialised by ws02 again. However, changing the IP address of ws01 to another in the same subnet led to ws02 accepting IPsec proposals but not initating them again. The way we tested this was:
+
+\begin{enumerate}
+	\item Bringing tunnel down by restarting the StrongSwan service on ws02
+	\item Changing desired configuration
+	\item Start ping the other endpoint from the host we wanted to initiate the connection
+	\item Checking Phase 1\&2 Proposals in MITM
+	\item Checking IPsec status on ws01 and ws02
+\end{enumerate}
+
+We concluded that this was by design, which relegated our ws02 to a server role. After this we finished our experiment.
+
+Our assumption was wrong, of course. Further research by Mr Thushjandan revealed, that we should have used:
+
+\begin{codebox}
+	right=\%any6
+	
+	\noindent rightsubnet=fd00:dead:cafe:1::/64
+\end{codebox}
+
+instead of "right=\%any", which can be seen in the feature request for StrongSwan in \cite{Brunner2012}. We have appended the working config in appendix \ref{app-sec:WorkingConf}.
 
 \section{Experiment results}
 \label{sec:ExpRes}
-% Pascal : brief summary
+IPsec support is very well implemented in Microsoft Windows 10, with a variety of configuration options and a comprehensive user interface. This led to a very uncomplicated setup of client ws01. Linux on the other hand (or in our case Ubuntu) ships with kernel support since 2.6, but this is only the kernel side. User mode configuration of tunnels need additional software. StrongSwan, in our case, has a logical structure of its files, but the usability and simplicity of configuration is lacking. One can argue that security should not be a simple matter, but Microsoft demonstrates that simplicity and security are not mutually exclusive. 
 
 \section{Further improvements}
 After the practical experiment we reflected how an automation of an IPsec tunnel configuration process in a heterogeneous IPv6-only environment could look like. 
@@ -574,6 +605,9 @@ conn ws01-enc-con
 : RSA ws02.nl.ch_key_unenc.pem
 #fd00:dead:cafe:2::2 : PSK superuser
 \end{lstlisting}
+
+\section{ipsec.conf for dynamic host tunneling}
+\label{app-sec:WorkingConf}
 
 \chapter{Root CA Certificate}
 
