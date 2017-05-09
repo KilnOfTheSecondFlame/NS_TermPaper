@@ -477,12 +477,39 @@ Due to our misconfiguration of the IDs of our peer, we did not get a phase 2 con
 % Pascal : brief summary
 
 \section{Further improvements}
-\subsection{Automation}
-% Tush : Automatisierung CA, Deployment, Evtl einlesen native IPsec implementation Linux feasibility
+After the practical experiment we reflected how an automation of an IPsec tunnel configuration process in a heterogeneous IPv6-only environment could look like. 
+According to chapter \ref{sec:IPv6IPsec} it should be possible to encrypt easily the traffic between two hosts, because IPsec is a component of IPv6 protocol.
+
+Firstly we have to automate the certificate enrollment process. Unfortunately it is not easily possible to realize this task with OpenSSL as CA. 
+Therefore Microsoft Active Directory Certificate Services (ADCS) will be a better choice than OpenSSL. 
+One of the main reasons is that ADCS can be perfectly integrated in an Active Directory environment. Certificate Autoenrollment can be easily configured with group policies for Windows computers. 
+Another reason for ADCS is that it supports the Simple Certificate Enrollment Protocol (SCEP).
+With SCEP it is possible to enroll automatically certificates for network devices and also for Linux machines. 
+Network Device Enrollment Service (NDES) is a module of ADCS. It implements the SCEP protocol. 
+
+Now how we should deploy the IPsec configuration to clients? With group policies we could easily enroll certificates and configure IPsec connection profiles for Windows machines. 
+After that every Windows computer will be able to establish IPsec tunnels to all hosts that are specified in the IPsec connection profile.
+
+Deploying IPsec profiles to Linux machines is a little bit trickier. We could use a software configuration management tool like Ansible. 
+With Ansible and additional custom scripts it is possible to automate the certificate enrollment and renewal process (Using a SCEP client).
+Also the installation and configuration of the IPsec client could be automated with Ansible. 
+
+There are existing a couple of SCEP clients for Linux. StrongSwan is delivering a client named "ipsec\_scepclient" \parencite{Hutter2005} or CertNanny \parencite{Bartosch2017}, 
+which uses the SSCEP Tool from Jarkko Turkulainen, is also a good candidate for certificate autoenrollment.
+
+Combining these given tools it is possible to build up automated End-to-End encryption as well for IPv6-only Linux environments.
 
 \section{Conclusion}
 \label{sec:Conc}
-% Tush : WRITE CONCLUSION
+In section \ref{sec:ExpectedResult} we adjusted to have difficulties configuring IPsec on a Windows computer. But the contrary has been happened during the experiment. 
+We had more difficulties to configure IPsec VPN on Linux than on Windows. Windows doesn't support a lot of encryption and hashing algorithm, but nevertheless it was easily to find the matching algorithm for both clients.
+
+End-to-End encryption can be in a Windows IPv6-only network easily deployed. Microsoft is delivering already suitable tools for this use case. 
+If Linux machines are also a part of the network, then several tools needs to be combined to achieve this goal. Thus it is possible to realize an End-to-End encryption between managed-machines in a network. 
+We have investigated only solutions with managed machines. It could be possible to offer End-to-End encryption for unmanaged clients, but this was not the scope of our term paper
+
+Unfortunately we have lost a lot of time for troubleshooting simple VPN issues. That's why we couldn't investigate more in this topic. 
+But we hope that this term paper gives someone a good fundament for further researches. 
 
 \appendix
 
