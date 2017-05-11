@@ -165,7 +165,7 @@ The length of an header in IPv6 is not variable like in IPv4. It has a fixed len
 In the figure \ref{fig:IPv4_IPv6_Header} the IPv6- and IPv4-header are presented. It shows that an IPv6 header is simpler that an IPv4 header. The reason is that many attributes were removed in IPv6.
 \begin{figure}[htb]
 	\centering
-	\includegraphics[keepaspectratio,width=0.8\textwidth]{ipv6_ipv4_headers}
+	\includegraphics[keepaspectratio,width=\linewidth]{ipv6_ipv4_headers}
 	\caption {IPv4 and IPv6 Headers \parencite{cisco2006}}
 	\label{fig:IPv4_IPv6_Header}
 \end{figure}
@@ -173,14 +173,14 @@ In the figure \ref{fig:IPv4_IPv6_Header} the IPv6- and IPv4-header are presented
 The IP option field is very important for the IP protocol operation. The functionality of IP options were removed from the main header and implemented in the extension headers. Extension headers (EH) are a set of additional headers, which can be added as needed. So the routers will only process the main header and will process the extension headers only if it is required.
 
 The figure~\ref{fig:IPv4_IPv6_ext_Header} explains how the extension headers are linked together in an IPv6 packet.
-\begin{figure}[htb]
+\begin{figure}[!h]
 	\centering
-	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_ext_headers}
+	\includegraphics[width=\linewidth]{ipv6_ipv4_ext_headers}
 	\caption {IPv6 extension header chain \parencite{cisco2006}}
 	\label{fig:IPv4_IPv6_ext_Header}
 \end{figure}
 The extension headers are defined in RFC 2460 and their are shown in the table~\ref{tab:extension_header_codes} along with the Next Header codes assigned to them. The recommended order, how the headers should be chained in a packet, is also defined in this RFC. \parencite[1-3]{cisco2006}
-\begin{table}[htbp]
+\begin{table}[!ht]
 	\centering
 	\caption{Extension Headers and their recommended order in a packet}
 	\label{tab:extension_header_codes}
@@ -205,7 +205,6 @@ The extension headers are defined in RFC 2460 and their are shown in the table~\
 	\end{tabular}
 \end{table}
 \newpage
-
 
 \section{VPN protocol suites}
 \label{sec:VPNs}
@@ -290,11 +289,11 @@ RSA, DSA and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms.
 
 Figure \ref{fig:asym_alg} shows how a public key encryption typically works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
 \begin{figure}[htb]
-	\includegraphics[keepaspectratio,width=0.8\textwidth]{asym_alg.jpg}
+	\includegraphics[keepaspectratio,width=\linewidth]{asym_alg.jpg}
 	\caption{Public Key Encryption process}
 	\label{fig:asym_alg}
 \end{figure}
-
+\newpage
 \subsubsection{Diffie-Hellman (DH)}
 \label{sssec:diffie-hellman}
 With Diffie-Hellman algorithm (DH) two devices can establish a shared secret over an unsecure network. It was published by Whitfield Diffie and Martin Hellman in 1976. Related to VPN, it is used in IKE Phase 1 and 2 for key exchange. 
@@ -602,10 +601,7 @@ conn ws01-enc-con
 #fd00:dead:cafe:2::2 : PSK superuser
 \end{lstlisting}
 
-\section{ipsec.conf for dynamic host tunneling}
-\label{app-sec:WorkingConf}
-
-\section{Windows Firewall IPsec configuration}
+\chapter{Windows Firewall IPsec configuration}
 \label{app-sec:WinIPsecConf}
 
 \begin{figure}[h!]
@@ -628,7 +624,8 @@ conn ws01-enc-con
 	\caption{Tunnel endpoints configuration}
 \end{figure}
 
-\chapter{Working Subnet-to-Subnet ipsec.conf}
+\chapter{Working Subnet-to-Subnet ipsec.conf (StrongSwan)}
+\label{app-sec:WorkingConf}
 
 \begin{lstlisting}
 # ipsec.conf - strongSwan IPsec configuration file
