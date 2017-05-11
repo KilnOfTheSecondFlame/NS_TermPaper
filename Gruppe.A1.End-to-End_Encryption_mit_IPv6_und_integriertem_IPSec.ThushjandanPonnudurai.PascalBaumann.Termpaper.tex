@@ -606,6 +606,45 @@ conn ws01-enc-con
 	\caption{Tunnel endpoints configuration}
 \end{figure}
 
+\chapter{Working Subnet-to-Subnet ipsec.conf}
+
+\begin{lstlisting}
+# ipsec.conf - strongSwan IPsec configuration file
+
+# basic configuration
+	config setup
+	charondebug="ike 4, knl 4, cfg 4, chd 4"
+
+ca strongswan
+	cacert=nl_cacert.cer
+
+conn %default
+	ikelifetime=480m
+	keylife=60m
+	keyexchange=ikev1
+
+# Add connections here.
+	conn ws01-enc-con
+	# Local Endpoint
+	left=fd00:dead:cafe:2::2
+	leftid="C=CH, ST=Zug, O=NL, CN=ws02.nl.ch"
+	leftauth=pubkey
+	leftcert=ws02.nl.ch_cert.pem
+	# Remote Endpoints
+	right=%any6
+	# Authentication would of course have to change when implementing
+	rightid="C=CH, ST=Zug, O=NL, CN=ws01.nl.ch"
+	rightca=same
+	rightauth=pubkey
+	type=transport
+	auto=route
+	# Encryption ciphers
+	# Phase 1 ciphers
+	ike=aes-256-sha256-modp2048
+	# Phase 2 ciphers / only ESP
+	esp=aes256gcm16-aes256gmac,aes128gcm16-aes128gmac
+\end{lstlisting}
+
 \chapter{Root CA Certificate}
 
 \begin{lstlisting}[language={}, basicstyle=\ttfamily\scriptsize, numberstyle=\ttfamily\scriptsize, stepnumber=5, firstnumber=1, numberfirstline=false]
