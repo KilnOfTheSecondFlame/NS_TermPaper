@@ -535,17 +535,14 @@ IPsec support is very well implemented in Microsoft Windows 10, with a variety o
 # ipsec.conf - strongSwan IPsec configuration file
 
 # basic configuration
-    config setup
+config setup
     charondebug="ike 4, knl 4, cfg 4, chd 4"
-    # strictcrlpolicy=yes
-    # uniqueids = no
 
 conn %default
     ikelifetime=480m
     keylife=60m
     keyexchange=ikev1
     #authby=secret
-
 
 # Add connections here.
 conn ws01-enc-con
@@ -561,7 +558,7 @@ conn ws01-enc-con
     auto=route
     # Encryption ciphers
     # Phase 1 ciphers
-    ike=aes-256-sha256-modp2048
+    ike=aes256-sha256-modp2048
     # Phase 2 ciphers / only ESP
     esp=aes256gcm16-aes256gmac,aes128gcm16-aes128gmac
 \end{lstlisting}
@@ -612,7 +609,7 @@ conn ws01-enc-con
 # ipsec.conf - strongSwan IPsec configuration file
 
 # basic configuration
-	config setup
+config setup
 	charondebug="ike 4, knl 4, cfg 4, chd 4"
 
 ca strongswan
@@ -624,7 +621,7 @@ conn %default
 	keyexchange=ikev1
 
 # Add connections here.
-	conn ws01-enc-con
+conn ws01-enc-con
 	# Local Endpoint
 	left=fd00:dead:cafe:2::2
 	leftid="C=CH, ST=Zug, O=NL, CN=ws02.nl.ch"
