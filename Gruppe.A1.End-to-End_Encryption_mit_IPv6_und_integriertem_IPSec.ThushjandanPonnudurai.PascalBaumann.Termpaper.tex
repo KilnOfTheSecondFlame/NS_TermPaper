@@ -162,9 +162,9 @@ IPv6 addresses are usually divided into two equal 64-bit parts. The first 64-bit
 The length of an header in IPv6 is not variable like in IPv4. It has a fixed length of 40 bytes. An IPv4 header can be as short as 20 bytes and as long as 60 bytes due to the IP options. Routers usually process all the options in the IPv4 header, even if these options aren't relevant for the processing router. This leads to a degradation of the forwarding performance.  With the fixed header length in IPv6, packet handling is more efficient. \parencite[128]{Loshin2004}
 
 In the figure \ref{fig:IPv4_IPv6_Header} the IPv6- and IPv4-header are presented. It shows that an IPv6 header is simpler that an IPv4 header. The reason is that many attributes were removed in IPv6.
-\begin{figure}
+\begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_headers}% no need to specify the file extension
+	\includegraphics[keepaspectratio,width=0.8\textwidth]{ipv6_ipv4_headers}
 	\caption {IPv4 and IPv6 Headers \parencite{cisco2006}}
 	\label{fig:IPv4_IPv6_Header}
 \end{figure}
@@ -172,14 +172,14 @@ In the figure \ref{fig:IPv4_IPv6_Header} the IPv6- and IPv4-header are presented
 The IP option field is very important for the IP protocol operation. The functionality of IP options were removed from the main header and implemented in the extension headers. Extension headers (EH) are a set of additional headers, which can be added as needed. So the routers will only process the main header and will process the extension headers only if it is required.
 
 The figure~\ref{fig:IPv4_IPv6_ext_Header} explains how the extension headers are linked together in an IPv6 packet.
-\begin{figure}
+\begin{figure}[htb]
 	\centering
-	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_ext_headers}% no need to specify the file extension
+	\includegraphics[width=0.8\linewidth]{ipv6_ipv4_ext_headers}
 	\caption {IPv6 extension header chain \parencite{cisco2006}}
 	\label{fig:IPv4_IPv6_ext_Header}
 \end{figure}
 The extension headers are defined in RFC 2460 and their are shown in the table~\ref{tab:extension_header_codes} along with the Next Header codes assigned to them. The recommended order, how the headers should be chained in a packet, is also defined in this RFC. \parencite[1-3]{cisco2006}
-\begin{table}[]
+\begin{table}[htbp]
 	\centering
 	\caption{Extension Headers and their recommended order in a packet}
 	\label{tab:extension_header_codes}
@@ -203,7 +203,7 @@ The extension headers are defined in RFC 2460 and their are shown in the table~\
 		Upper layer&  ICMPv6&  58 \\
 	\end{tabular}
 \end{table}
-
+\newpage
 
 
 \section{VPN protocol suites}
@@ -289,7 +289,7 @@ RSA, DSA and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms.
 
 Figure \ref{fig:asym_alg} shows how a public key encryption typically works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
 \begin{figure}[htb]
-	\includegraphics[width=\linewidth]{asym_alg.jpg}
+	\includegraphics[keepaspectratio,width=0.8\textwidth]{asym_alg.jpg}
 	\caption{Public Key Encryption process}
 	\label{fig:asym_alg}
 \end{figure}
@@ -508,12 +508,37 @@ instead of "right=\%any", which can be seen in the feature request for StrongSwa
 IPsec support is very well implemented in Microsoft Windows 10, with a variety of configuration options and a comprehensive user interface. This led to a very uncomplicated setup of client ws01. Linux on the other hand (or in our case Ubuntu) ships with kernel support since 2.6, but this is only the kernel side. User mode configuration of tunnels need additional software. StrongSwan, in our case, has a logical structure of its files, but the usability and simplicity of configuration is lacking. One can argue that security should not be a simple matter, but Microsoft demonstrates that simplicity and security are not mutually exclusive. 
 
 \section{Further improvements}
-\subsection{Automation}
-% Tush : Automatisierung CA, Deployment, Evtl einlesen native IPsec implementation Linux feasibility
+After the practical experiment we reflected how an automation of an IPsec tunnel configuration process in a heterogeneous IPv6-only environment could look like. 
+According to chapter \ref{sec:IPv6IPsec} it should be possible to encrypt all traffic between two hosts easily, as IPsec is a required component of the IPv6 protocol.
+
+First we have to automate the certificate enrollment process. Unfortunately, it is not easily possible to realize this task with OpenSSL as CA. 
+Therefore Microsoft Active Directory Certificate Services (ADCS) would be a better choice than OpenSSL. 
+One of the main reasons is that ADCS can be perfectly integrated in an Active Directory environment. Certificate Autoenrollment can be easily configured with group policies for Windows computers. 
+Another reason for ADCS is that it supports the Simple Certificate Enrollment Protocol (SCEP).
+With SCEP it is possible to automatically roll out certificates for any network device, including machines running a Linux distribution. 
+Network Device Enrollment Service (NDES) is a module of ADCS. It implements the SCEP protocol. 
+
+Now how should we deploy the IPsec configuration to clients? With group policies we could easily enroll certificates and configure IPsec connection profiles for Windows machines. 
+After that every Windows computer will be able to establish IPsec tunnels to all hosts that are specified in the IPsec connection profile.
+
+Deploying IPsec profiles to Linux machines is a little bit trickier. We could use a software configuration management tool like Ansible. 
+With Ansible and additional custom scripts it is possible to automate the certificate enrollment and renewal process (Using a SCEP client).
+Also the installation and configuration of the IPsec client could be automated with Ansible. 
+There exist a couple of SCEP clients for Linux. StrongSwan is delivering a client named "ipsec\_scepclient" \parencite{Hutter2005} or CertNanny \parencite{Bartosch2017}, 
+which uses the SSCEP Tool from Jarkko Turkulainen, is also a good candidate for certificate autoenrollment.
+
+Combining these tools it would be possible to automatically deploy End-to-End encryption for IPv6-only Linux environments as well.
 
 \section{Conclusion}
 \label{sec:Conc}
-% Tush : WRITE CONCLUSION
+In section \ref{sec:ExpectedResult} we expected to have difficulties with configuring IPsec on a Windows computer. But the contrary has happened during our experiment. 
+We had more difficulties to configure IPsec VPN on Linux than on Windows. Windows doesn't support as many encryption and hashing algorithms as StrongSwan, but to find matching algorithms for both clients was easy.
+
+End-to-End encryption in a Windows IPv6-only network could be deployed easily. Microsoft is delivering already suitable tools for this use case. 
+If Linux machines are also a part of the network, then several tools need to be combined to achieve the same goal. Nevertheless, it is possible to realize End-to-End encryption between managed machines in a network. 
+We have investigated a solution with managed machines only. It would be possible to offer End-to-End encryption for clients with a centralized configuration, but this was not in the scope of our term paper
+
+We hope that our paper can be a good foundation for further research. 
 
 \appendix
 
