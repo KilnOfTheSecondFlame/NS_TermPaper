@@ -567,24 +567,25 @@ We hope that our paper can be a good foundation for further research.
 
 # basic configuration
 config setup
-    charondebug="ike 4, knl 4, cfg 4, chd 4"
+    # Debug mode
+    charondebug="ike 4,knl 4,cfg 4,chd 4"
 
+# Default configuration for all connection profiles
 conn %default
     ikelifetime=480m
     keylife=60m
     keyexchange=ikev1
-    #authby=secret
 
-# Add connections here.
+# Connection profile
 conn ws01-enc-con
     # Local Endpoint
     left=fd00:dead:cafe:2::2
-    leftid="C=CH, ST=Zug, O=NL, CN=ws02.nl.ch"
+    leftid="C=CH,ST=Zug,O=NL,CN=ws02.nl.ch"
     leftauth=pubkey
     leftcert=ws02.nl.ch_cert.pem
     # Remote Endpoint
     right=fd00:dead:cafe:1::2
-    rightid="C=CH, ST=Zug, O=NL, CN=ws01.nl.ch"
+    rightid="C=CH,ST=Zug,O=NL,CN=ws01.nl.ch"
     rightauth=pubkey
     auto=route
     # Encryption ciphers
@@ -601,11 +602,8 @@ conn ws01-enc-con
 # /etc/ipsec.secrets - strongSwan IPsec secrets file
 # This file holds shared secrets or RSA private keys for authentication.
 
-# RSA private key for this host, authenticating it to any other host
-# which knows the public part.
-
 : RSA ws02.nl.ch_key_unenc.pem
-#fd00:dead:cafe:2::2 : PSK superuser
+
 \end{lstlisting}
 
 \chapter{Windows Firewall IPsec configuration}
@@ -639,28 +637,31 @@ conn ws01-enc-con
 
 # basic configuration
 config setup
-	charondebug="ike 4, knl 4, cfg 4, chd 4"
+	# Debug mode
+	charondebug="ike 4,knl 4,cfg 4,chd 4"
 
+# Trusted CA certificate for cert authentication
 ca strongswan
 	cacert=nl_cacert.cer
 
+# Default configuration for all connection profiles
 conn %default
 	ikelifetime=480m
 	keylife=60m
 	keyexchange=ikev1
 
-# Add connections here.
+# Connection profile
 conn ws01-enc-con
 	# Local Endpoint
 	left=fd00:dead:cafe:2::2
-	leftid="C=CH, ST=Zug, O=NL, CN=ws02.nl.ch"
+	leftid="C=CH,ST=Zug,O=NL,CN=ws02.nl.ch"
 	leftauth=pubkey
 	leftcert=ws02.nl.ch_cert.pem
 	# Remote Endpoints
 	right=%any6
 	rightsubnet=fd00:dead:cafe:1::/64
 	# Authentication would of course have to change when implementing
-	rightid="C=CH, ST=Zug, O=NL, CN=ws01.nl.ch"
+	rightid="C=CH,ST=Zug,O=NL,CN=ws01.nl.ch"
 	rightca=%same
 	rightauth=pubkey
 	type=transport
