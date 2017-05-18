@@ -332,6 +332,26 @@ There are existing several HMAC algorithms with various key length. Some of them
 	\item MD5 HMAC
 \end{itemize}
 
+\subsection{ISAKMP Security Associations}
+\label{ssec:SA}
+As defined in \citetitle{Harkins1998}: "A security association (SA) is a set of policy and key(s) used to protect information. The ISAKMP SA is the shared policy and key(s) used by the negotiating peers in this protocol to protect their communication." \parencite{Harkins1998}
+
+In short, a SA defines a relationship between two IPsec peers and specifies which options of the ISAKMP and underlying protocols will be used in traffic between these partners.
+Some of the concepts used while establishing SAs have been discussed in the preceding chapters (see \ref{ssec:AlgoDH} for an example about hashing).
+
+Sample SA proposal using the IKE key exchange (taken from figure \ref{fig:FirstSAProposal} and abbreviated) in pseudocode:
+\begin{lstlisting}
+    Type Payload: SA Proposal
+    Proposal number: 1
+    IKE Encryption Algorithm:   AES-CBC
+    IKE Key Length:             256
+    IKE Hash Algorithm:         SHA2-256
+    IKE Group-Description:      2048bit MODP group (DH group 14)
+    IKE Authentication Method:  Pre-shared key
+    IKE Life-time:              28800seconds (8 hours)
+\end{lstlisting}
+
+
 \subsection{IKE Phase 1}
 \label{ssec:Phase1}
 "Phase 1 of an AutoKey Internet Key Exchange (IKE) tunnel negotiation consists of the exchange of proposals for how to authenticate and secure the channel." \parencite{JuniperNetworks2016} The result of this phase is the establishment of an ISAKMP/IKE security association (SA). Mandatory parameters for negotiating an IKE SA are the encryption algorithm, hash algorithm, authentication mode (preshared-key or RSA/DSA certificates) and Diffie-Hellman (DH) group.
@@ -358,7 +378,7 @@ Aggressive mode is faster than the Main mode, but it does not provide the identi
 
 \subsection{IKE Phase 2}
 \label{ssec:Phase2}
-After a secure IKE tunnel is established in the first phase, there is a second round of exchanging key information and building security associations (SA). "A security association (SA) is a set of policy and key(s) used to protect information. The ISAKMP SA is the shared policy and key(s) used by the negotiating peers in this protocol to protect their communication." \parencite{Harkins1998} After obtaining possibly multiple SAs, the IPsec tunnel is finally formed and the peers exchange information encrypted with the SAs. In the so called quick mode, the peers negotiate a common IPsec policy and secret keying material, which in turn lead to the IPsec SAs. If Perfect Forward Secrecy (PFS) is demanded, a new Diffie-Helman key exchange is performed through the secure ISAKMP tunnel. This ensures the keys from phase one be completely unrelated to the keys from phase two. The drawback of this is the additional computations needed to complete the DH key exchange.
+After a secure IKE tunnel is established in the first phase, there is a second round of exchanging key information and building security associations\footnote{refer to subsection \ref{ssec:SA}}. After possibly obtaining multiple SAs, the IPsec tunnel is finally formed and the peers exchange information encrypted with a symmetric key obtained through a matching SA proposal. In the so called quick mode, the peers negotiate a common IPsec policy and secret keying material, which in turn lead to the IPsec SAs. If Perfect Forward Secrecy (PFS) is demanded, a new Diffie-Helman key exchange is performed through the secure ISAKMP tunnel. This ensures the keys from phase one be completely unrelated to the keys from phase two. The drawback of this is the additional computations needed to complete the DH key exchange.
 
 \section{IPv6 with IPsec}
 \label{sec:IPv6IPsec}
