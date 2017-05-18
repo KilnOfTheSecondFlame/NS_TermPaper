@@ -272,8 +272,8 @@ Sender and receiver are using the same secret key to encrypt and to decrypt the 
 
 Some symmetrical algorithms:
 \begin{itemize}
-	\item AES (128, 192 or 256 bit)
-	\item DES (56-bit)
+	\item AES\footnote{Advanced Encryption Standard - First published on 1998.} (128, 192 or 256 bit)
+	\item DES\footnote{Data Encryption Standard - First published on 1975.} (56-bit)
 	\item Triple-DES or 3DES (3x 56-bit = 168-bit).
 	\item Blowfish (128, 192 or 256 bit)
 	\item CAST (128-bit)
@@ -288,7 +288,7 @@ Asymmetrical algorithms, also known as public key algorithm, use separate keys f
 The key advantage of an asymmetrical algorithm is the ease of distribution of the encryption/decryption key. Only the private key must be kept secret. The public key can be distributed to anyone.
 A drawback for asymmetric algorithms is, that they are typically slower than symmetrical algorithms. They involve exponential operations which need more CPU cycles. Asymmetric algorithms are often used to secure key exchanges rather than for bulk data encryption.
 
-RSA, DSA and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms. \parencite{Bollapragada2005}
+RSA\footnote{Rivest-Shamir-Adleman - The security is based on the difficulty of factoring large integers.}, DSA\footnote{Digital Signature Algorithm - The security is based on the discrete logarithm problem.} and Elliptic Curve Cryptography (ECC) are some asymmetrical algorithms. \parencite{Bollapragada2005}
 
 Figure \ref{fig:asym_alg} shows how a public key encryption typically works. The process starts with negotiating a public key algorithm and ends with the decryption of Alice's message.
 \begin{figure}[htb]
